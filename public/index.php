@@ -1,8 +1,11 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', TRUE);
-ini_set('display_startup_errors', TRUE);
+ini_set('display_startup_errors',1);
+ini_set('display_errors',1);
+ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_startup_errors', TRUE);
 date_default_timezone_set('Europe/Rome');
 
 function printw($key) {
@@ -36,7 +39,8 @@ catch (\Exception $e) {
 try {
     foreach (\WolfMVC\Censor::get("init_database") as $key => $idb) {
         $database = new WolfMVC\Database();
-        WolfMVC\Registry::set("database_" . \WolfMVC\Censor::get("database")[$idb][0], $database->initialize(\WolfMVC\Censor::get("database")[$idb][1]));
+        $db = \WolfMVC\Censor::get("database");
+        WolfMVC\Registry::set("database_" . $db[$idb][0], $database->initialize($db[$idb][1]));
     }
 }
 catch (\WolfMVC\Configuration\Exception\Syntax $e) {

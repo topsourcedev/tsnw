@@ -379,3 +379,38 @@ function editfieldwithrestriction(step, idfield, picklist, type, ajaxsearchurl, 
     }
 
 }
+
+
+function prforrecop(url){
+    console.log("ciao");
+    var xmlhttp;
+    if (window.XMLHttpRequest)
+    {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    }
+    else
+    {// code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+        {
+            var rel = function (){
+                setTimeout(function(){
+                    location.reload();
+                },100);
+            };
+            if (xmlhttp.responseText == 'ok') {
+                console.log("cancello");
+                rel();
+            }
+        }
+        
+
+    }
+    
+    xmlhttp.open("GET", url, true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.send();
+}

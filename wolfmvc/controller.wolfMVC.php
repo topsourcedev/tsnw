@@ -68,7 +68,7 @@ use WolfMVC\Controller\Exception as Exception;
 
         protected function _getExceptionForImplementation($method) {
             //return new Exception\Implementation("{$method} method not implemented");
-            return new Exception\Implementation(Registry::get("language")->sh("WolfMVC.Controller.Exception.Implementation", [$method]));
+            return new Exception\Implementation(Registry::get("language")->sh("WolfMVC.Controller.Exception.Implementation", array($method)));
         }
 
         protected function _getExceptionForArgument() {

@@ -81,7 +81,8 @@ namespace WolfMVC\Controller\Component {
                     $previousfields = $form->getSensibleFields();
                     foreach ($previousfields as $pf) {
                         
-                        $fc = $form->fromindexFields($pf)[0];
+                        $fc = $form->fromindexFields($pf);
+                        $fc = $fc[0];
                         $this->_forms[$this->_actualstep - 1]->add(new FC\Hidden(), true)
                         ->setName($fc->getName())->setValue(\WolfMVC\RequestMethods::post($fc->getName()));
                     }

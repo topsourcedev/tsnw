@@ -50,7 +50,7 @@ use \WolfMVC\Template\Component as Comp;
          * @var array
          */
         protected $_operations = array();
-        
+
         /**
          *
          * @var array
@@ -68,13 +68,13 @@ use \WolfMVC\Template\Component as Comp;
          * @var string
          */
         protected $_editurl;
-        
+
         /**
          * @readwrite
          * @var string
          */
         protected $_deleteurl;
-        
+
         /**
          * @readwrite
          * @var array
@@ -193,12 +193,12 @@ use \WolfMVC\Template\Component as Comp;
                                 foreach ($restriction as $part => $value) {
                                     foreach ($value as $arr => $regole) {
                                         $array = array();
-                                        
+
                                         foreach ($regole as $regola) {
                                             preg_match("/{{(.*)}}/", $regola, $matches);
                                             if (count($matches) > 0) {
 //                                                print_r($matches);
-                                                if (isset($this->_columns[$matches[1]])){
+                                                if (isset($this->_columns[$matches[1]])) {
                                                     if ($this->_indexfrommodel) {
                                                         $id = $this->_id . "_" . $matches[1] . "_" . $d[$this->_indexinmodel];
                                                     }
@@ -206,21 +206,22 @@ use \WolfMVC\Template\Component as Comp;
                                                         $id = $this->_id . "_" . $matches[1] . "_" . $index;
                                                     }
                                                 }
-                                                $array [] =  "(".str_ireplace($matches[0], "document.getElementById('{$id}').innerHTML.trim()", $regola).")";
+                                                $array [] = "(" . str_ireplace($matches[0], "document.getElementById('{$id}').innerHTML.trim()", $regola) . ")";
                                             }
-                                            else $array [] =  $regola;
+                                            else
+                                                $array [] = $regola;
                                         }
-                                     $res[$part][$arr] = "\t\t\tcase {$arr}:\n\t\t\tcase '{$arr}':\n \t\t\t\treturn (".join(" && ",$array).");\n \t\t\tbreak;\n";
+                                        $res[$part][$arr] = "\t\t\tcase {$arr}:\n\t\t\tcase '{$arr}':\n \t\t\t\treturn (" . join(" && ", $array) . ");\n \t\t\tbreak;\n";
 //                                     $res[$part][$arr] = str_ireplace("()", "false", $res[$part][$arr]);
-                                     if ($res[$part][$arr] == "return ();")
-                                         $res[$part][$arr] = 'return false;';
+                                        if ($res[$part][$arr] == "return ();")
+                                            $res[$part][$arr] = 'return false;';
                                     }
-                                    $res[$part] = "\tcase {$part}:\n\tcase '{$part}':\n\t\tswitch(arr){\n".join("\n",$res[$part])."\n \t\t\tdefault:\n \t\t\t\treturn false;\n\t\t}\n\t\tbreak;\n";
+                                    $res[$part] = "\tcase {$part}:\n\tcase '{$part}':\n\t\tswitch(arr){\n" . join("\n", $res[$part]) . "\n \t\t\tdefault:\n \t\t\t\treturn false;\n\t\t}\n\t\tbreak;\n";
                                 }
-                                $include .= "function {$tdid}_check(part,arr){\nswitch(part){\n".join("\n",$res)."\n\tdefault:\n \t\treturn false;\n\t}\n}\n";
-                              $html .= "<script>\n";
-                              $html .= $include;
-                              $html .= "</script>\n";
+                                $include .= "function {$tdid}_check(part,arr){\nswitch(part){\n" . join("\n", $res) . "\n\tdefault:\n \t\treturn false;\n\t}\n}\n";
+                                $html .= "<script>\n";
+                                $html .= $include;
+                                $html .= "</script>\n";
 //                                  echo "<pre>";
 //                                  echo $include;
 //                                print_r($res);
@@ -234,22 +235,51 @@ use \WolfMVC\Template\Component as Comp;
                     $td->setDatum($datum)->setClass("tabular");
                     $html .= $td->make("");
                 }
-                foreach ($this->_recoperations as $key => $op){
+                foreach ($this->_recoperations as $key => $op) {
                     if ($this->_indexfrommodel) {
                         $tdid = $this->_id . "_" . $key . "_" . $d[$this->_indexinmodel];
                     }
                     else {
                         $tdid = $this->_id . "_" . $key . "_" . $index;
                     }
-                    
+
                     $tdclass = "tabular";
                     $td = new Td(array(
                       "id" => $tdid,
                       "class" => $tdclass
                     ));
-                    $td->setDatum($op['button']);
+                    if (!empty($this->_servicesforrecordop[$key])) {
+                        $service = $this->_servicesforrecordop[$key];
+//                        echo "<pre>";
+//
+//                        print_r($service);
+//                        echo "</pre>";
+                    }
+                    else {
+                        continue;
+                    }
+                    foreach ($service[1] as $i => $serv) {
+
+                        preg_match("/{{(.*)}}/", $serv, $matches);
+                        if (count($matches) > 0) {
+//                            echo "<pre>";
+//                            if ($key == "dettagli")print_r($matches);
+//                                                    echo "</pre>";
+//                            print_r($d);
+
+                            if (isset($d[$matches[1]]))
+                                $service[1][$i] = str_ireplace($matches[0], $d[$matches[1]], $serv);
+                        }
+                    }
+                    if (isset($service[2]) && $service[2] == "red") {
+                        $button = "<form action=\"".vsprintf($service[0], $service[1])."\"><button type=\"submit\">" . $op['button'] . "</button></form>";
+                        
+                    }
+                    else {
+                        $button = "<button type=\"button\" onclick=\"prforrecop('" . vsprintf($service[0], $service[1]) . "')\">" . $op['button'] . "</button>";
+                    }
+                    $td->setDatum($button);
                     $html .= $td->make("");
-                    
                 }
                 $html .= "</tr>";
             }
@@ -268,7 +298,7 @@ use \WolfMVC\Template\Component as Comp;
         }
 
         public function getColsFromModel($which_cols = "") {
-            $commands = ["is", "fixedpicklist", "link"];
+            $commands = array("is", "fixedpicklist", "link");
             $this->_columns = array();
             $model = $this->_model;
             $cols = $which_cols;
@@ -321,7 +351,7 @@ use \WolfMVC\Template\Component as Comp;
             $this->_recoperations[$column] = array(
               "idop" => $idop,
               "button" => $button
-              );
+            );
             return $this;
         }
 
