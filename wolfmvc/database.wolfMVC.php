@@ -31,14 +31,10 @@ namespace WolfMVC
             if (!$this->type)
             {
                 $configuration = \WolfMVC\Registry::get("configuration");
-                
                 if ($configuration)
                 {
                     $configuration = $configuration->initialize(); //restituisce il driver
                     $parsed = $configuration->parse("application/configuration/".$conf);
-//                    echo "<pre>";
-//                    print_r($parsed);
-//                    echo "</pre>";
                     if (!empty($parsed->database->default) && !empty($parsed->database->default->type))
                     {
                         $this->type = $parsed->database->default->type;
