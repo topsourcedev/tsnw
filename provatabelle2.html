@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<!--
+Questo software è stato creato da Alberto Brudaglio per TopSource S.r.l. Tutti i diritti sono riservati.
+This software has ben developed by Alberto Brudaglio for Topsource S.r.l. All rights reserved.
+-->
+<html>
+    <head>
+        <title>Prova tabelle ordinabili</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="./public/js/jquery.js"></script>
+        <script src="./public/js/wolfutils.js"></script>
+        <script src="./public/js/wolfjs.js"></script>
+        <script>
+
+            
+            
+
+
+
+            function genera() {
+                var tabella = document.getElementById("ordertable_1");
+                if (!tabella) {
+                    console.log("non trovo tabella");
+                    return;
+                }
+                for (var i = 0; i < 10; i++) {
+                    var rowCount = tabella.rows.length;
+                    var row = tabella.insertRow(rowCount);
+                    var cell1 = row.insertCell(0);
+                    cell1.innerHTML = 1 * 10 + i;
+                    var cell2 = row.insertCell(1);
+                    cell2.innerHTML = 2 * 10 - i;
+                    var cell3 = row.insertCell(2);
+                    cell3.innerHTML = 3 * 10 + i;
+                    var cell4 = row.insertCell(3);
+                    cell4.innerHTML = 4 * 10 - i;
+                }
+            }
+
+           
+
+            function ordertable(col, flag) {
+                if (typeof (flag) === 'undefined')
+                    flag = "";
+                var tabella = document.getElementById("ordertable_1");
+                if (!tabella) {
+                    console.log("no tables found");
+                    return;
+                }
+                var nrows = 0;
+                var ncells = 0;
+                var rows = tabella.rows;
+                var data = new Array();
+                var format = new Array();
+                nrows = rows.length;
+                for (var i = 1; i < rows.length; i++) {
+
+                    var cells = rows[i].cells;
+                    data[i] = new Array();
+                    format[i] = new Array();
+                    for (var j = 0; j < cells.length; j++) {
+                        ncells = Math.max(ncells, j);
+                        if (j == col) {
+                            switch (flag) {
+                                case "date":
+                                    var res = string2caldate(cells[j].innerHTML, 0);
+                                    data[i][j] = res[1];
+                                    if ((typeof (format[i][j]) === 'undefined') || format[i][j] == null)
+                                        format[i][j] = new Array();
+                                    format[i][j]["dateformat"] = res[0];
+                                    break;
+                                case "number":
+                                    data[i][j] = Number(cells[j].innerHTML);
+                                    break;
+                                    
+                                default:
+                                    data[i][j] = cells[j].innerHTML;
+                            }
+                        }
+                        else {
+                            data[i][j] = cells[j].innerHTML;
+                        }
+
+
+                    }
+
+                }
+                var sort = function(a, b) {
+                    if (a[col] < b[col])
+                        return -1;
+                    else
+                        return 1;
+                }
+                data.sort(sort);
+                for (var i = nrows - 1; i > 0; i--) {
+                    tabella.deleteRow(i);
+                }
+                for (var i = 1; i < 10000000; i++) {
+                }
+                for (var i = 1; i < nrows; i++) {
+                    var row = tabella.insertRow(i);
+                    for (var j = 0; j <= ncells; j++) {
+                        var cell = row.insertCell(j);
+                        if (j == col) {
+                            switch (flag) {
+                                case "date":
+                                    var date = data[i - 1][j];
+                                    console.log("riscrivo data");
+                                    console.log(date);
+                                    console.log(caldate2string(date));
+                                    cell.innerHTML = caldate2string(date, (format[i][j]["dateformat"] ? format[i][j]["dateformat"] : 1));
+                                    break;
+                                default:
+                                    cell.innerHTML = data[i - 1][j];
+                            }
+                        }
+                        else {
+                            cell.innerHTML = data[i - 1][j];
+                        }
+                    }
+                }
+            }
+            
+            //table = id della tabella
+             
+            
+            
+            
+        </script>
+
+
+    </head>
+    <body onload="wolf_cens();">
+         
+        <table class="ordertable" width="100%" orderingtable id="ciccio">
+
+
+            <tr class="ordertable" id="ordertable_tr1"><th otdatatype="number">#</th><th otdatatype="number">Importo</th><th>Tipo</th><th>Cliente</th><th>Stato</th><th>Riferimento</th><th>Banca</th><th otdatatype="date">Data emissione</th><th otdatatype="date">Data ricezione</th><th otdatatype="date">Data versamento</th><th otdatatype="date">Data valuta</th><th>Ns. Banca</th></tr>
+            <tr><td>3</td><td class="tabular" id="gestincassi_amount_3">4490</td>
+                <td class="tabular" id="gestincassi_type_3">ASS</td>
+                <td class="tabular" id="gestincassi_accountname_3"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=23766">SOCIETA' AGRICOLA SOL</a></td>
+            <td class="tabular" id="gestincassi_statename_3" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_3', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '3')">ricevuto</td>
+            <td class="tabular" id="gestincassi_ref_3">0722011482-10</td>
+            <td class="tabular" id="gestincassi_bankname_3">BANCA CREMONESE</td>
+            <td class="tabular" id="gestincassi_emissiondate_3" ondblclick="editfield(0, 'gestincassi_emissiondate_3', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '3')">2014-06-03</td>
+            <td class="tabular" id="gestincassi_receiptdate_3" ondblclick="editfield(0, 'gestincassi_receiptdate_3', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '3')">2014-05-05</td>
+            <td class="tabular" id="gestincassi_depositdate_3" ondblclick="editfield(0, 'gestincassi_depositdate_3', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '3')"></td>
+            <td class="tabular" id="gestincassi_valuedate_3" ondblclick="editfield(0, 'gestincassi_valuedate_3', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '3')"></td>
+            <td class="tabular" id="gestincassi_ourbankname_3" ondblclick="editfield(0, 'gestincassi_ourbankname_3', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '3')">Non Assegnata</td>
+            <td class="tabular" id="gestincassi_elimina_3"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=3')">del</button></td>
+            <td class="tabular" id="gestincassi_dettagli_3"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/3/23766"><button type="submit">SO</button></form></td>
+        </tr>
+        <tr><td>1</td><td class="tabular" id="gestincassi_amount_1">2562</td>
+    <td class="tabular" id="gestincassi_type_1">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_1"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=23766">SOCIETA' AGRICOLA SOL</a></td>
+
+<td class="tabular" id="gestincassi_statename_1" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_1', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '1')">versato</td>
+<td class="tabular" id="gestincassi_ref_1">0722011481-09</td>
+<td class="tabular" id="gestincassi_bankname_1">BANCA CREMONESE</td>
+<td class="tabular" id="gestincassi_emissiondate_1" ondblclick="editfield(0, 'gestincassi_emissiondate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '1')">2014-05-21</td>
+<td class="tabular" id="gestincassi_receiptdate_1" ondblclick="editfield(0, 'gestincassi_receiptdate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '1')">2014-05-05</td>
+<td class="tabular" id="gestincassi_depositdate_1" ondblclick="editfield(0, 'gestincassi_depositdate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '1')">2014-05-21</td>
+<td class="tabular" id="gestincassi_valuedate_1" ondblclick="editfield(0, 'gestincassi_valuedate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '1')">2014-05-24</td>
+<td class="tabular" id="gestincassi_ourbankname_1" ondblclick="editfield(0, 'gestincassi_ourbankname_1', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '1')">BPM</td>
+<td class="tabular" id="gestincassi_elimina_1"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=1')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_1"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/1/23766"><button type="submit">SO</button></form></td>
+</tr>
+        <tr><td>9</td><td class="tabular" id="gestincassi_amount_9">3416</td>
+            <td class="tabular" id="gestincassi_type_9">ASS</td>
+            <td class="tabular" id="gestincassi_accountname_9"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=28602">Fass Luce Srl</a></td>
+        
+        <td class="tabular" id="gestincassi_statename_9" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_9', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '9')">ricevuto</td>
+        <td class="tabular" id="gestincassi_ref_9">1900032087-05</td>
+        <td class="tabular" id="gestincassi_bankname_9">BANCA DI TREVISO S.P.A.</td>
+        <td class="tabular" id="gestincassi_emissiondate_9" ondblclick="editfield(0, 'gestincassi_emissiondate_9', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '9')">2014-05-26</td>
+        <td class="tabular" id="gestincassi_receiptdate_9" ondblclick="editfield(0, 'gestincassi_receiptdate_9', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '9')">2014-05-15</td>
+        <td class="tabular" id="gestincassi_depositdate_9" ondblclick="editfield(0, 'gestincassi_depositdate_9', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '9')"></td>
+        <td class="tabular" id="gestincassi_valuedate_9" ondblclick="editfield(0, 'gestincassi_valuedate_9', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '9')"></td>
+        <td class="tabular" id="gestincassi_ourbankname_9" ondblclick="editfield(0, 'gestincassi_ourbankname_9', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '9')">Non Assegnata</td>
+        <td class="tabular" id="gestincassi_elimina_9"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=9')">del</button></td>
+        <td class="tabular" id="gestincassi_dettagli_9"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/9/28602"><button type="submit">SO</button></form></td>
+    </tr><tr><td>11</td><td class="tabular" id="gestincassi_amount_11">2806</td>
+        <td class="tabular" id="gestincassi_type_11">ASS</td>
+        <td class="tabular" id="gestincassi_accountname_11"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=2932">One Day Srl</a></td>
+    
+    <td class="tabular" id="gestincassi_statename_11" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_11', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '11')">ricevuto</td>
+    <td class="tabular" id="gestincassi_ref_11">0034020518-12</td>
+    <td class="tabular" id="gestincassi_bankname_11">B.C.C. VICENTINO - POJANA MAGGIORE (VI)</td>
+    <td class="tabular" id="gestincassi_emissiondate_11" ondblclick="editfield(0, 'gestincassi_emissiondate_11', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '11')">2014-05-30</td>
+    <td class="tabular" id="gestincassi_receiptdate_11" ondblclick="editfield(0, 'gestincassi_receiptdate_11', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '11')">2014-02-28</td>
+    <td class="tabular" id="gestincassi_depositdate_11" ondblclick="editfield(0, 'gestincassi_depositdate_11', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '11')"></td>
+    <td class="tabular" id="gestincassi_valuedate_11" ondblclick="editfield(0, 'gestincassi_valuedate_11', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '11')"></td>
+    <td class="tabular" id="gestincassi_ourbankname_11" ondblclick="editfield(0, 'gestincassi_ourbankname_11', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '11')">Non Assegnata</td>
+    <td class="tabular" id="gestincassi_elimina_11"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=11')">del</button></td>
+    <td class="tabular" id="gestincassi_dettagli_11"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/11/2932"><button type="submit">SO</button></form></td>
+</tr><tr><td>12</td><td class="tabular" id="gestincassi_amount_12">610</td>
+    <td class="tabular" id="gestincassi_type_12">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_12"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=30371">GEL COSTRUZIONI DI GROSSI EMANUEL LUIS</a></td>
+
+<td class="tabular" id="gestincassi_statename_12" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_12', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '12')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_12">0209919264-09</td>
+<td class="tabular" id="gestincassi_bankname_12">BANCA DELLE MARCHE SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_12" ondblclick="editfield(0, 'gestincassi_emissiondate_12', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '12')">2014-05-31</td>
+<td class="tabular" id="gestincassi_receiptdate_12" ondblclick="editfield(0, 'gestincassi_receiptdate_12', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '12')">2014-05-10</td>
+<td class="tabular" id="gestincassi_depositdate_12" ondblclick="editfield(0, 'gestincassi_depositdate_12', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '12')"></td>
+<td class="tabular" id="gestincassi_valuedate_12" ondblclick="editfield(0, 'gestincassi_valuedate_12', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '12')"></td>
+<td class="tabular" id="gestincassi_ourbankname_12" ondblclick="editfield(0, 'gestincassi_ourbankname_12', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '12')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_12"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=12')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_12"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/12/30371"><button type="submit">SO</button></form></td>
+</tr><tr><td>13</td><td class="tabular" id="gestincassi_amount_13">1220</td>
+    <td class="tabular" id="gestincassi_type_13">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_13"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=13369">M.R. DI COBELLI CLAUDIO</a></td>
+
+<td class="tabular" id="gestincassi_statename_13" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_13', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '13')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_13">0010681076-03</td>
+<td class="tabular" id="gestincassi_bankname_13">BANCA DI CREDITO COOPERATIVO DI POMPIANO E DELLA F</td>
+<td class="tabular" id="gestincassi_emissiondate_13" ondblclick="editfield(0, 'gestincassi_emissiondate_13', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '13')">2014-06-03</td>
+<td class="tabular" id="gestincassi_receiptdate_13" ondblclick="editfield(0, 'gestincassi_receiptdate_13', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '13')">2014-05-08</td>
+<td class="tabular" id="gestincassi_depositdate_13" ondblclick="editfield(0, 'gestincassi_depositdate_13', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '13')"></td>
+<td class="tabular" id="gestincassi_valuedate_13" ondblclick="editfield(0, 'gestincassi_valuedate_13', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '13')"></td>
+<td class="tabular" id="gestincassi_ourbankname_13" ondblclick="editfield(0, 'gestincassi_ourbankname_13', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '13')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_13"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=13')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_13"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/13/13369"><button type="submit">SO</button></form></td>
+</tr><tr><td>14</td><td class="tabular" id="gestincassi_amount_14">915</td>
+    <td class="tabular" id="gestincassi_type_14">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_14"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=20494">CARROZZERIA GIACOMEL</a></td>
+
+<td class="tabular" id="gestincassi_statename_14" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_14', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '14')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_14">3674558036-06</td>
+<td class="tabular" id="gestincassi_bankname_14">UNICREDIT BANCA SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_14" ondblclick="editfield(0, 'gestincassi_emissiondate_14', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '14')">2014-06-05</td>
+<td class="tabular" id="gestincassi_receiptdate_14" ondblclick="editfield(0, 'gestincassi_receiptdate_14', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '14')">2014-04-08</td>
+<td class="tabular" id="gestincassi_depositdate_14" ondblclick="editfield(0, 'gestincassi_depositdate_14', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '14')"></td>
+<td class="tabular" id="gestincassi_valuedate_14" ondblclick="editfield(0, 'gestincassi_valuedate_14', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '14')"></td>
+<td class="tabular" id="gestincassi_ourbankname_14" ondblclick="editfield(0, 'gestincassi_ourbankname_14', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '14')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_14"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=14')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_14"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/14/20494"><button type="submit">SO</button></form></td>
+</tr><tr><td>15</td><td class="tabular" id="gestincassi_amount_15">2000</td>
+    <td class="tabular" id="gestincassi_type_15">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_15"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=18746">Minerva srl</a></td>
+
+<td class="tabular" id="gestincassi_statename_15" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_15', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '15')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_15">9014992941-06</td>
+<td class="tabular" id="gestincassi_bankname_15">CASSA DI RISPARMIO DI ASTI SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_15" ondblclick="editfield(0, 'gestincassi_emissiondate_15', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '15')">2014-06-05</td>
+<td class="tabular" id="gestincassi_receiptdate_15" ondblclick="editfield(0, 'gestincassi_receiptdate_15', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '15')">2014-04-15</td>
+<td class="tabular" id="gestincassi_depositdate_15" ondblclick="editfield(0, 'gestincassi_depositdate_15', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '15')"></td>
+<td class="tabular" id="gestincassi_valuedate_15" ondblclick="editfield(0, 'gestincassi_valuedate_15', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '15')"></td>
+<td class="tabular" id="gestincassi_ourbankname_15" ondblclick="editfield(0, 'gestincassi_ourbankname_15', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '15')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_15"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=15')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_15"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/15/18746"><button type="submit">SO</button></form></td>
+</tr><tr><td>16</td><td class="tabular" id="gestincassi_amount_16">1737.5</td>
+    <td class="tabular" id="gestincassi_type_16">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_16"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=2353">F&G SRL</a></td>
+
+<td class="tabular" id="gestincassi_statename_16" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_16', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '16')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_16">1034946864-03</td>
+<td class="tabular" id="gestincassi_bankname_16">BANCA DI CREDITO COOPERATIVO DI ROMA SCRL</td>
+<td class="tabular" id="gestincassi_emissiondate_16" ondblclick="editfield(0, 'gestincassi_emissiondate_16', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '16')">2014-06-03</td>
+<td class="tabular" id="gestincassi_receiptdate_16" ondblclick="editfield(0, 'gestincassi_receiptdate_16', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '16')">2014-05-06</td>
+<td class="tabular" id="gestincassi_depositdate_16" ondblclick="editfield(0, 'gestincassi_depositdate_16', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '16')"></td>
+<td class="tabular" id="gestincassi_valuedate_16" ondblclick="editfield(0, 'gestincassi_valuedate_16', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '16')"></td>
+<td class="tabular" id="gestincassi_ourbankname_16" ondblclick="editfield(0, 'gestincassi_ourbankname_16', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '16')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_16"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=16')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_16"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/16/2353"><button type="submit">SO</button></form></td>
+</tr><tr><td>17</td><td class="tabular" id="gestincassi_amount_17">1830</td>
+    <td class="tabular" id="gestincassi_type_17">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_17"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=29664">Racing Color Moto Sport di Pompilio Fabrizio</a></td>
+
+<td class="tabular" id="gestincassi_statename_17" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_17', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '17')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_17">0266865957-07</td>
+<td class="tabular" id="gestincassi_bankname_17">CREDITO EMILIANO SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_17" ondblclick="editfield(0, 'gestincassi_emissiondate_17', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '17')">2014-06-06</td>
+<td class="tabular" id="gestincassi_receiptdate_17" ondblclick="editfield(0, 'gestincassi_receiptdate_17', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '17')">2014-05-15</td>
+<td class="tabular" id="gestincassi_depositdate_17" ondblclick="editfield(0, 'gestincassi_depositdate_17', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '17')"></td>
+<td class="tabular" id="gestincassi_valuedate_17" ondblclick="editfield(0, 'gestincassi_valuedate_17', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '17')"></td>
+<td class="tabular" id="gestincassi_ourbankname_17" ondblclick="editfield(0, 'gestincassi_ourbankname_17', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '17')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_17"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=17')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_17"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/17/29664"><button type="submit">SO</button></form></td>
+</tr><tr><td>18</td><td class="tabular" id="gestincassi_amount_18">2000</td>
+    <td class="tabular" id="gestincassi_type_18">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_18"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=27246">DARDI GIANLUIGI SNC</a></td>
+
+<td class="tabular" id="gestincassi_statename_18" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_18', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '18')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_18">0104116567-09</td>
+<td class="tabular" id="gestincassi_bankname_18">BANCA DI CREDITO COOPERATIVO DELLA ROMAGNA OCCIDEN</td>
+<td class="tabular" id="gestincassi_emissiondate_18" ondblclick="editfield(0, 'gestincassi_emissiondate_18', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '18')">2014-05-26</td>
+<td class="tabular" id="gestincassi_receiptdate_18" ondblclick="editfield(0, 'gestincassi_receiptdate_18', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '18')">2014-04-12</td>
+<td class="tabular" id="gestincassi_depositdate_18" ondblclick="editfield(0, 'gestincassi_depositdate_18', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '18')"></td>
+<td class="tabular" id="gestincassi_valuedate_18" ondblclick="editfield(0, 'gestincassi_valuedate_18', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '18')"></td>
+<td class="tabular" id="gestincassi_ourbankname_18" ondblclick="editfield(0, 'gestincassi_ourbankname_18', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '18')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_18"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=18')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_18"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/18/27246"><button type="submit">SO</button></form></td>
+</tr><tr><td>19</td><td class="tabular" id="gestincassi_amount_19">2440</td>
+    <td class="tabular" id="gestincassi_type_19">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_19"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=6915">MAZZAMATI MANUFATTI IN CEMENTO SRL</a></td>
+
+<td class="tabular" id="gestincassi_statename_19" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_19', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '19')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_19">3677017083-12</td>
+<td class="tabular" id="gestincassi_bankname_19">UNICREDIT BANCA SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_19" ondblclick="editfield(0, 'gestincassi_emissiondate_19', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '19')">2014-06-10</td>
+<td class="tabular" id="gestincassi_receiptdate_19" ondblclick="editfield(0, 'gestincassi_receiptdate_19', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '19')">2014-05-09</td>
+<td class="tabular" id="gestincassi_depositdate_19" ondblclick="editfield(0, 'gestincassi_depositdate_19', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '19')"></td>
+<td class="tabular" id="gestincassi_valuedate_19" ondblclick="editfield(0, 'gestincassi_valuedate_19', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '19')"></td>
+<td class="tabular" id="gestincassi_ourbankname_19" ondblclick="editfield(0, 'gestincassi_ourbankname_19', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '19')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_19"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=19')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_19"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/19/6915"><button type="submit">SO</button></form></td>
+</tr><tr><td>21</td><td class="tabular" id="gestincassi_amount_21">1757</td>
+    <td class="tabular" id="gestincassi_type_21">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_21"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=17560">BIEMME LAVORI STRADALI SRL</a></td>
+
+<td class="tabular" id="gestincassi_statename_21" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_21', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '21')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_21">0185138776-04</td>
+<td class="tabular" id="gestincassi_bankname_21">BANCA POPOLARE DELL'EMILIA ROMAGNA</td>
+<td class="tabular" id="gestincassi_emissiondate_21" ondblclick="editfield(0, 'gestincassi_emissiondate_21', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '21')">2014-06-16</td>
+<td class="tabular" id="gestincassi_receiptdate_21" ondblclick="editfield(0, 'gestincassi_receiptdate_21', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '21')">2014-05-06</td>
+<td class="tabular" id="gestincassi_depositdate_21" ondblclick="editfield(0, 'gestincassi_depositdate_21', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '21')"></td>
+<td class="tabular" id="gestincassi_valuedate_21" ondblclick="editfield(0, 'gestincassi_valuedate_21', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '21')"></td>
+<td class="tabular" id="gestincassi_ourbankname_21" ondblclick="editfield(0, 'gestincassi_ourbankname_21', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '21')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_21"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=21')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_21"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/21/17560"><button type="submit">SO</button></form></td>
+</tr><tr><td>22</td><td class="tabular" id="gestincassi_amount_22">2614.28</td>
+    <td class="tabular" id="gestincassi_type_22">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_22"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=16263">Giba snc</a></td>
+
+<td class="tabular" id="gestincassi_statename_22" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_22', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '22')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_22">0197167311-03</td>
+<td class="tabular" id="gestincassi_bankname_22">CASSA DI RISPARMIO DI PARMA E PIACENZA</td>
+<td class="tabular" id="gestincassi_emissiondate_22" ondblclick="editfield(0, 'gestincassi_emissiondate_22', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '22')">2014-06-05</td>
+<td class="tabular" id="gestincassi_receiptdate_22" ondblclick="editfield(0, 'gestincassi_receiptdate_22', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '22')">2014-03-12</td>
+<td class="tabular" id="gestincassi_depositdate_22" ondblclick="editfield(0, 'gestincassi_depositdate_22', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '22')"></td>
+<td class="tabular" id="gestincassi_valuedate_22" ondblclick="editfield(0, 'gestincassi_valuedate_22', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '22')"></td>
+<td class="tabular" id="gestincassi_ourbankname_22" ondblclick="editfield(0, 'gestincassi_ourbankname_22', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '22')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_22"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=22')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_22"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/22/16263"><button type="submit">SO</button></form></td>
+</tr><tr><td>23</td><td class="tabular" id="gestincassi_amount_23">1000</td>
+    <td class="tabular" id="gestincassi_type_23">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_23"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=2942">OMB Srl</a></td>
+
+<td class="tabular" id="gestincassi_statename_23" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_23', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '23')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_23">3673730219-03</td>
+<td class="tabular" id="gestincassi_bankname_23">UNICREDIT BANCA SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_23" ondblclick="editfield(0, 'gestincassi_emissiondate_23', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '23')">2014-06-17</td>
+<td class="tabular" id="gestincassi_receiptdate_23" ondblclick="editfield(0, 'gestincassi_receiptdate_23', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '23')">2014-05-06</td>
+<td class="tabular" id="gestincassi_depositdate_23" ondblclick="editfield(0, 'gestincassi_depositdate_23', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '23')"></td>
+<td class="tabular" id="gestincassi_valuedate_23" ondblclick="editfield(0, 'gestincassi_valuedate_23', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '23')"></td>
+<td class="tabular" id="gestincassi_ourbankname_23" ondblclick="editfield(0, 'gestincassi_ourbankname_23', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '23')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_23"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=23')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_23"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/23/2942"><button type="submit">SO</button></form></td>
+</tr><tr><td>24</td><td class="tabular" id="gestincassi_amount_24">1220</td>
+    <td class="tabular" id="gestincassi_type_24">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_24"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=11639">OMEGA SRL</a></td>
+
+<td class="tabular" id="gestincassi_statename_24" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_24', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '24')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_24">0810034941-01</td>
+<td class="tabular" id="gestincassi_bankname_24">BANCA DI CREDITO COOPERATIVO DI CALCIO E DI COVO</td>
+<td class="tabular" id="gestincassi_emissiondate_24" ondblclick="editfield(0, 'gestincassi_emissiondate_24', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '24')">2014-06-18</td>
+<td class="tabular" id="gestincassi_receiptdate_24" ondblclick="editfield(0, 'gestincassi_receiptdate_24', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '24')">2014-05-15</td>
+<td class="tabular" id="gestincassi_depositdate_24" ondblclick="editfield(0, 'gestincassi_depositdate_24', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '24')"></td>
+<td class="tabular" id="gestincassi_valuedate_24" ondblclick="editfield(0, 'gestincassi_valuedate_24', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '24')"></td>
+<td class="tabular" id="gestincassi_ourbankname_24" ondblclick="editfield(0, 'gestincassi_ourbankname_24', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '24')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_24"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=24')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_24"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/24/11639"><button type="submit">SO</button></form></td>
+</tr><tr><td>25</td><td class="tabular" id="gestincassi_amount_25">1708</td>
+    <td class="tabular" id="gestincassi_type_25">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_25"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=27246">DARDI GIANLUIGI SNC</a></td>
+
+<td class="tabular" id="gestincassi_statename_25" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_25', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '25')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_25">0104117331-06</td>
+<td class="tabular" id="gestincassi_bankname_25">BANCA DI CREDITO COOPERATIVO DELLA ROMAGNA OCCIDEN</td>
+<td class="tabular" id="gestincassi_emissiondate_25" ondblclick="editfield(0, 'gestincassi_emissiondate_25', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '25')">2014-06-23</td>
+<td class="tabular" id="gestincassi_receiptdate_25" ondblclick="editfield(0, 'gestincassi_receiptdate_25', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '25')">2014-05-08</td>
+<td class="tabular" id="gestincassi_depositdate_25" ondblclick="editfield(0, 'gestincassi_depositdate_25', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '25')"></td>
+<td class="tabular" id="gestincassi_valuedate_25" ondblclick="editfield(0, 'gestincassi_valuedate_25', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '25')"></td>
+<td class="tabular" id="gestincassi_ourbankname_25" ondblclick="editfield(0, 'gestincassi_ourbankname_25', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '25')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_25"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=25')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_25"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/25/27246"><button type="submit">SO</button></form></td>
+</tr>
+
+<!--<tr><td>26</td><td class="tabular" id="gestincassi_amount_26">1525</td>
+    <td class="tabular" id="gestincassi_type_26">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_26"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=17968">PULITURA METALLI DI CIPRIANO ROCCO</a></td>
+
+<td class="tabular" id="gestincassi_statename_26" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_26', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '26')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_26">5180165737-06</td>
+<td class="tabular" id="gestincassi_bankname_26">BANCA POPOLARE DI BERGAMO - CREDITO VARESINO SCRL</td>
+<td class="tabular" id="gestincassi_emissiondate_26" ondblclick="editfield(0, 'gestincassi_emissiondate_26', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '26')">2014-06-30</td>
+<td class="tabular" id="gestincassi_receiptdate_26" ondblclick="editfield(0, 'gestincassi_receiptdate_26', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '26')">2014-04-01</td>
+<td class="tabular" id="gestincassi_depositdate_26" ondblclick="editfield(0, 'gestincassi_depositdate_26', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '26')"></td>
+<td class="tabular" id="gestincassi_valuedate_26" ondblclick="editfield(0, 'gestincassi_valuedate_26', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '26')"></td>
+<td class="tabular" id="gestincassi_ourbankname_26" ondblclick="editfield(0, 'gestincassi_ourbankname_26', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '26')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_26"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=26')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_26"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/26/17968"><button type="submit">SO</button></form></td>
+</tr><tr><td>27</td><td class="tabular" id="gestincassi_amount_27">2614.28</td>
+    <td class="tabular" id="gestincassi_type_27">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_27"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=16263">Giba snc</a></td>
+<script>
+    function gestincassi_statename_27_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_27').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_27').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_27').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_27').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_27" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_27', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '27')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_27">0197167312-04</td>
+<td class="tabular" id="gestincassi_bankname_27">CASSA DI RISPARMIO DI PARMA E PIACENZA</td>
+<td class="tabular" id="gestincassi_emissiondate_27" ondblclick="editfield(0, 'gestincassi_emissiondate_27', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '27')">2014-07-04</td>
+<td class="tabular" id="gestincassi_receiptdate_27" ondblclick="editfield(0, 'gestincassi_receiptdate_27', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '27')">2014-03-12</td>
+<td class="tabular" id="gestincassi_depositdate_27" ondblclick="editfield(0, 'gestincassi_depositdate_27', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '27')"></td>
+<td class="tabular" id="gestincassi_valuedate_27" ondblclick="editfield(0, 'gestincassi_valuedate_27', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '27')"></td>
+<td class="tabular" id="gestincassi_ourbankname_27" ondblclick="editfield(0, 'gestincassi_ourbankname_27', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '27')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_27"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=27')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_27"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/27/16263"><button type="submit">SO</button></form></td>
+</tr><tr><td>28</td><td class="tabular" id="gestincassi_amount_28">2000</td>
+    <td class="tabular" id="gestincassi_type_28">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_28"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=18746">Minerva srl</a></td>
+<script>
+    function gestincassi_statename_28_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_28').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_28').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_28').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_28').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_28" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_28', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '28')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_28">9014992942-07</td>
+<td class="tabular" id="gestincassi_bankname_28">CASSA DI RISPARMIO DI ASTI SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_28" ondblclick="editfield(0, 'gestincassi_emissiondate_28', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '28')">2014-07-04</td>
+<td class="tabular" id="gestincassi_receiptdate_28" ondblclick="editfield(0, 'gestincassi_receiptdate_28', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '28')">2014-04-15</td>
+<td class="tabular" id="gestincassi_depositdate_28" ondblclick="editfield(0, 'gestincassi_depositdate_28', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '28')"></td>
+<td class="tabular" id="gestincassi_valuedate_28" ondblclick="editfield(0, 'gestincassi_valuedate_28', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '28')"></td>
+<td class="tabular" id="gestincassi_ourbankname_28" ondblclick="editfield(0, 'gestincassi_ourbankname_28', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '28')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_28"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=28')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_28"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/28/18746"><button type="submit">SO</button></form></td>
+</tr><tr><td>29</td><td class="tabular" id="gestincassi_amount_29">1708</td>
+    <td class="tabular" id="gestincassi_type_29">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_29"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=27246">DARDI GIANLUIGI SNC</a></td>
+<script>
+    function gestincassi_statename_29_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_29').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_29').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_29').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_29').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_29" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_29', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '29')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_29">0104117332-07</td>
+<td class="tabular" id="gestincassi_bankname_29">BANCA DI CREDITO COOPERATIVO DELLA ROMAGNA OCCIDEN</td>
+<td class="tabular" id="gestincassi_emissiondate_29" ondblclick="editfield(0, 'gestincassi_emissiondate_29', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '29')">2014-07-21</td>
+<td class="tabular" id="gestincassi_receiptdate_29" ondblclick="editfield(0, 'gestincassi_receiptdate_29', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '29')">2014-05-08</td>
+<td class="tabular" id="gestincassi_depositdate_29" ondblclick="editfield(0, 'gestincassi_depositdate_29', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '29')"></td>
+<td class="tabular" id="gestincassi_valuedate_29" ondblclick="editfield(0, 'gestincassi_valuedate_29', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '29')"></td>
+<td class="tabular" id="gestincassi_ourbankname_29" ondblclick="editfield(0, 'gestincassi_ourbankname_29', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '29')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_29"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=29')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_29"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/29/27246"><button type="submit">SO</button></form></td>
+</tr><tr><td>30</td><td class="tabular" id="gestincassi_amount_30">1196</td>
+    <td class="tabular" id="gestincassi_type_30">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_30"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=2942">OMB Srl</a></td>
+<script>
+    function gestincassi_statename_30_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_30').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_30').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_30').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_30').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_30" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_30', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '30')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_30">3673730220-04</td>
+<td class="tabular" id="gestincassi_bankname_30">UNICREDIT BANCA SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_30" ondblclick="editfield(0, 'gestincassi_emissiondate_30', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '30')">2014-07-28</td>
+<td class="tabular" id="gestincassi_receiptdate_30" ondblclick="editfield(0, 'gestincassi_receiptdate_30', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '30')">2014-05-06</td>
+<td class="tabular" id="gestincassi_depositdate_30" ondblclick="editfield(0, 'gestincassi_depositdate_30', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '30')"></td>
+<td class="tabular" id="gestincassi_valuedate_30" ondblclick="editfield(0, 'gestincassi_valuedate_30', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '30')"></td>
+<td class="tabular" id="gestincassi_ourbankname_30" ondblclick="editfield(0, 'gestincassi_ourbankname_30', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '30')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_30"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=30')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_30"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/30/2942"><button type="submit">SO</button></form></td>
+</tr><tr><td>31</td><td class="tabular" id="gestincassi_amount_31">6100</td>
+    <td class="tabular" id="gestincassi_type_31">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_31"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=20758">S.T.A. SRL</a></td>
+<script>
+    function gestincassi_statename_31_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_31').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_31').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_31').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_31').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_31" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_31', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '31')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_31">0337001359-06</td>
+<td class="tabular" id="gestincassi_bankname_31">CREDITO BERGAMASCO S.P.A.</td>
+<td class="tabular" id="gestincassi_emissiondate_31" ondblclick="editfield(0, 'gestincassi_emissiondate_31', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '31')">2014-07-31</td>
+<td class="tabular" id="gestincassi_receiptdate_31" ondblclick="editfield(0, 'gestincassi_receiptdate_31', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '31')">2014-03-14</td>
+<td class="tabular" id="gestincassi_depositdate_31" ondblclick="editfield(0, 'gestincassi_depositdate_31', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '31')"></td>
+<td class="tabular" id="gestincassi_valuedate_31" ondblclick="editfield(0, 'gestincassi_valuedate_31', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '31')"></td>
+<td class="tabular" id="gestincassi_ourbankname_31" ondblclick="editfield(0, 'gestincassi_ourbankname_31', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '31')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_31"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=31')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_31"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/31/20758"><button type="submit">SO</button></form></td>
+</tr><tr><td>32</td><td class="tabular" id="gestincassi_amount_32">2614.28</td>
+    <td class="tabular" id="gestincassi_type_32">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_32"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=16263">Giba snc</a></td>
+<script>
+    function gestincassi_statename_32_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_32').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_32').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_32').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_32').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_32" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_32', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '32')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_32">0197167313-05</td>
+<td class="tabular" id="gestincassi_bankname_32">CASSA DI RISPARMIO DI PARMA E PIACENZA</td>
+<td class="tabular" id="gestincassi_emissiondate_32" ondblclick="editfield(0, 'gestincassi_emissiondate_32', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '32')">2014-08-04</td>
+<td class="tabular" id="gestincassi_receiptdate_32" ondblclick="editfield(0, 'gestincassi_receiptdate_32', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '32')">2014-03-12</td>
+<td class="tabular" id="gestincassi_depositdate_32" ondblclick="editfield(0, 'gestincassi_depositdate_32', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '32')"></td>
+<td class="tabular" id="gestincassi_valuedate_32" ondblclick="editfield(0, 'gestincassi_valuedate_32', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '32')"></td>
+<td class="tabular" id="gestincassi_ourbankname_32" ondblclick="editfield(0, 'gestincassi_ourbankname_32', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '32')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_32"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=32')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_32"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/32/16263"><button type="submit">SO</button></form></td>
+</tr><tr><td>33</td><td class="tabular" id="gestincassi_amount_33">2614.28</td>
+    <td class="tabular" id="gestincassi_type_33">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_33"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=16263">Giba snc</a></td>
+<script>
+    function gestincassi_statename_33_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_33').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_33').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_33').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_33').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_33" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_33', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '33')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_33">0197167314-06</td>
+<td class="tabular" id="gestincassi_bankname_33">CASSA DI RISPARMIO DI PARMA E PIACENZA</td>
+<td class="tabular" id="gestincassi_emissiondate_33" ondblclick="editfield(0, 'gestincassi_emissiondate_33', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '33')">2014-09-04</td>
+<td class="tabular" id="gestincassi_receiptdate_33" ondblclick="editfield(0, 'gestincassi_receiptdate_33', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '33')">2014-03-12</td>
+<td class="tabular" id="gestincassi_depositdate_33" ondblclick="editfield(0, 'gestincassi_depositdate_33', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '33')"></td>
+<td class="tabular" id="gestincassi_valuedate_33" ondblclick="editfield(0, 'gestincassi_valuedate_33', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '33')"></td>
+<td class="tabular" id="gestincassi_ourbankname_33" ondblclick="editfield(0, 'gestincassi_ourbankname_33', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '33')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_33"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=33')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_33"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/33/16263"><button type="submit">SO</button></form></td>
+</tr><tr><td>34</td><td class="tabular" id="gestincassi_amount_34">1708</td>
+    <td class="tabular" id="gestincassi_type_34">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_34"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=27246">DARDI GIANLUIGI SNC</a></td>
+<script>
+    function gestincassi_statename_34_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_34').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_34').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_34').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_34').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_34" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_34', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '34')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_34">0104117333-08</td>
+<td class="tabular" id="gestincassi_bankname_34">BANCA DI CREDITO COOPERATIVO DELLA ROMAGNA OCCIDEN</td>
+<td class="tabular" id="gestincassi_emissiondate_34" ondblclick="editfield(0, 'gestincassi_emissiondate_34', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '34')">2014-09-22</td>
+<td class="tabular" id="gestincassi_receiptdate_34" ondblclick="editfield(0, 'gestincassi_receiptdate_34', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '34')">2014-05-08</td>
+<td class="tabular" id="gestincassi_depositdate_34" ondblclick="editfield(0, 'gestincassi_depositdate_34', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '34')"></td>
+<td class="tabular" id="gestincassi_valuedate_34" ondblclick="editfield(0, 'gestincassi_valuedate_34', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '34')"></td>
+<td class="tabular" id="gestincassi_ourbankname_34" ondblclick="editfield(0, 'gestincassi_ourbankname_34', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '34')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_34"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=34')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_34"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/34/27246"><button type="submit">SO</button></form></td>
+</tr><tr><td>35</td><td class="tabular" id="gestincassi_amount_35">2614.28</td>
+    <td class="tabular" id="gestincassi_type_35">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_35"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=16263">Giba snc</a></td>
+<script>
+    function gestincassi_statename_35_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_35').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_35').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_35').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_35').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_35" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_35', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '35')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_35">0197167315-07</td>
+<td class="tabular" id="gestincassi_bankname_35">CASSA DI RISPARMIO DI PARMA E PIACENZA</td>
+<td class="tabular" id="gestincassi_emissiondate_35" ondblclick="editfield(0, 'gestincassi_emissiondate_35', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '35')">2014-10-06</td>
+<td class="tabular" id="gestincassi_receiptdate_35" ondblclick="editfield(0, 'gestincassi_receiptdate_35', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '35')">2014-03-12</td>
+<td class="tabular" id="gestincassi_depositdate_35" ondblclick="editfield(0, 'gestincassi_depositdate_35', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '35')"></td>
+<td class="tabular" id="gestincassi_valuedate_35" ondblclick="editfield(0, 'gestincassi_valuedate_35', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '35')"></td>
+<td class="tabular" id="gestincassi_ourbankname_35" ondblclick="editfield(0, 'gestincassi_ourbankname_35', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '35')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_35"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=35')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_35"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/35/16263"><button type="submit">SO</button></form></td>
+</tr><tr><td>36</td><td class="tabular" id="gestincassi_amount_36">1708</td>
+    <td class="tabular" id="gestincassi_type_36">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_36"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=27246">DARDI GIANLUIGI SNC</a></td>
+<script>
+    function gestincassi_statename_36_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_36').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_36').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_36').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_36').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_36" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_36', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '36')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_36">0104117334-09</td>
+<td class="tabular" id="gestincassi_bankname_36">BANCA DI CREDITO COOPERATIVO DELLA ROMAGNA OCCIDEN</td>
+<td class="tabular" id="gestincassi_emissiondate_36" ondblclick="editfield(0, 'gestincassi_emissiondate_36', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '36')">2014-10-20</td>
+<td class="tabular" id="gestincassi_receiptdate_36" ondblclick="editfield(0, 'gestincassi_receiptdate_36', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '36')">2014-03-08</td>
+<td class="tabular" id="gestincassi_depositdate_36" ondblclick="editfield(0, 'gestincassi_depositdate_36', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '36')"></td>
+<td class="tabular" id="gestincassi_valuedate_36" ondblclick="editfield(0, 'gestincassi_valuedate_36', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '36')"></td>
+<td class="tabular" id="gestincassi_ourbankname_36" ondblclick="editfield(0, 'gestincassi_ourbankname_36', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '36')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_36"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=36')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_36"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/36/27246"><button type="submit">SO</button></form></td>
+</tr><tr><td>37</td><td class="tabular" id="gestincassi_amount_37">1708</td>
+    <td class="tabular" id="gestincassi_type_37">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_37"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=27246">DARDI GIANLUIGI SNC</a></td>
+<script>
+    function gestincassi_statename_37_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_37').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_37').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_37').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_37').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_37" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_37', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '37')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_37">0104117335-10</td>
+<td class="tabular" id="gestincassi_bankname_37">BANCA DI CREDITO COOPERATIVO DELLA ROMAGNA OCCIDEN</td>
+<td class="tabular" id="gestincassi_emissiondate_37" ondblclick="editfield(0, 'gestincassi_emissiondate_37', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '37')">2014-11-20</td>
+<td class="tabular" id="gestincassi_receiptdate_37" ondblclick="editfield(0, 'gestincassi_receiptdate_37', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '37')">2014-05-08</td>
+<td class="tabular" id="gestincassi_depositdate_37" ondblclick="editfield(0, 'gestincassi_depositdate_37', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '37')"></td>
+<td class="tabular" id="gestincassi_valuedate_37" ondblclick="editfield(0, 'gestincassi_valuedate_37', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '37')"></td>
+<td class="tabular" id="gestincassi_ourbankname_37" ondblclick="editfield(0, 'gestincassi_ourbankname_37', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '37')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_37"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=37')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_37"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/37/27246"><button type="submit">SO</button></form></td>
+</tr><tr><td>44</td><td class="tabular" id="gestincassi_amount_44">288</td>
+    <td class="tabular" id="gestincassi_type_44">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_44"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=31950">bettacchi p.a. srl</a></td>
+<script>
+    function gestincassi_statename_44_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_44').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_44').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_44').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_44').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_44" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_44', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '44')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_44">0005111562-01</td>
+<td class="tabular" id="gestincassi_bankname_44">BANCA DI CREDITO COOPERATIVO DI CASTAGNETO CARDUCC</td>
+<td class="tabular" id="gestincassi_emissiondate_44" ondblclick="editfield(0, 'gestincassi_emissiondate_44', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '44')">2104-05-26</td>
+<td class="tabular" id="gestincassi_receiptdate_44" ondblclick="editfield(0, 'gestincassi_receiptdate_44', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '44')">2014-05-26</td>
+<td class="tabular" id="gestincassi_depositdate_44" ondblclick="editfield(0, 'gestincassi_depositdate_44', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '44')"></td>
+<td class="tabular" id="gestincassi_valuedate_44" ondblclick="editfield(0, 'gestincassi_valuedate_44', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '44')"></td>
+<td class="tabular" id="gestincassi_ourbankname_44" ondblclick="editfield(0, 'gestincassi_ourbankname_44', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '44')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_44"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=44')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_44"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/44/31950"><button type="submit">SO</button></form></td>
+</tr><tr><td>45</td><td class="tabular" id="gestincassi_amount_45">610</td>
+    <td class="tabular" id="gestincassi_type_45">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_45"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=28560">Pastificio MENNILLI RENATO Srl</a></td>
+<script>
+    function gestincassi_statename_45_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_45').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_45').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_45').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_45').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_45" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_45', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '45')">ricevuto</td>
+<td class="tabular" id="gestincassi_ref_45">5307989481</td>
+<td class="tabular" id="gestincassi_bankname_45">BANCA DELL'ADRIATICO S.P.A.</td>
+<td class="tabular" id="gestincassi_emissiondate_45" ondblclick="editfield(0, 'gestincassi_emissiondate_45', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '45')">2014-05-26</td>
+<td class="tabular" id="gestincassi_receiptdate_45" ondblclick="editfield(0, 'gestincassi_receiptdate_45', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '45')">2014-05-26</td>
+<td class="tabular" id="gestincassi_depositdate_45" ondblclick="editfield(0, 'gestincassi_depositdate_45', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '45')"></td>
+<td class="tabular" id="gestincassi_valuedate_45" ondblclick="editfield(0, 'gestincassi_valuedate_45', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '45')"></td>
+<td class="tabular" id="gestincassi_ourbankname_45" ondblclick="editfield(0, 'gestincassi_ourbankname_45', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '45')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_45"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=45')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_45"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/45/28560"><button type="submit">SO</button></form></td>
+</tr><tr><td>6</td><td class="tabular" id="gestincassi_amount_6">610</td>
+    <td class="tabular" id="gestincassi_type_6">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_6"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=28196">ZEUS DISTRIBUTION di Viganò Vittorio</a></td>
+<script>
+    function gestincassi_statename_6_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_6').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_6').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_6').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_6').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_6" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_6', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '6')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_6">0338230105-05</td>
+<td class="tabular" id="gestincassi_bankname_6">CREDITO BERGAMASCO S.P.A.</td>
+<td class="tabular" id="gestincassi_emissiondate_6" ondblclick="editfield(0, 'gestincassi_emissiondate_6', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '6')">2014-05-05</td>
+<td class="tabular" id="gestincassi_receiptdate_6" ondblclick="editfield(0, 'gestincassi_receiptdate_6', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '6')">2014-04-22</td>
+<td class="tabular" id="gestincassi_depositdate_6" ondblclick="editfield(0, 'gestincassi_depositdate_6', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '6')"></td>
+<td class="tabular" id="gestincassi_valuedate_6" ondblclick="editfield(0, 'gestincassi_valuedate_6', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '6')"></td>
+<td class="tabular" id="gestincassi_ourbankname_6" ondblclick="editfield(0, 'gestincassi_ourbankname_6', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '6')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_6"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=6')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_6"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/6/28196"><button type="submit">SO</button></form></td>
+</tr><tr><td>7</td><td class="tabular" id="gestincassi_amount_7">1952</td>
+    <td class="tabular" id="gestincassi_type_7">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_7"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=28196">ZEUS DISTRIBUTION di Viganò Vittorio</a></td>
+<script>
+    function gestincassi_statename_7_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_7').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_7').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_7').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_7').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_7" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_7', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '7')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_7">0338230107-07</td>
+<td class="tabular" id="gestincassi_bankname_7">CREDITO BERGAMASCO S.P.A.</td>
+<td class="tabular" id="gestincassi_emissiondate_7" ondblclick="editfield(0, 'gestincassi_emissiondate_7', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '7')">2014-05-05</td>
+<td class="tabular" id="gestincassi_receiptdate_7" ondblclick="editfield(0, 'gestincassi_receiptdate_7', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '7')">2014-04-22</td>
+<td class="tabular" id="gestincassi_depositdate_7" ondblclick="editfield(0, 'gestincassi_depositdate_7', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '7')"></td>
+<td class="tabular" id="gestincassi_valuedate_7" ondblclick="editfield(0, 'gestincassi_valuedate_7', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '7')"></td>
+<td class="tabular" id="gestincassi_ourbankname_7" ondblclick="editfield(0, 'gestincassi_ourbankname_7', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '7')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_7"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=7')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_7"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/7/28196"><button type="submit">SO</button></form></td>
+</tr><tr><td>38</td><td class="tabular" id="gestincassi_amount_38">3050</td>
+    <td class="tabular" id="gestincassi_type_38">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_38"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=8160">LASER SRL</a></td>
+<script>
+    function gestincassi_statename_38_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_38').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_38').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_38').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_38').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_38" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_38', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '38')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_38">0009297538-03</td>
+<td class="tabular" id="gestincassi_bankname_38">BANCA DI CREDITO COOPERATIVO DI PIOVE DI SACCO SCR</td>
+<td class="tabular" id="gestincassi_emissiondate_38" ondblclick="editfield(0, 'gestincassi_emissiondate_38', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '38')">2014-03-31</td>
+<td class="tabular" id="gestincassi_receiptdate_38" ondblclick="editfield(0, 'gestincassi_receiptdate_38', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '38')">2014-03-05</td>
+<td class="tabular" id="gestincassi_depositdate_38" ondblclick="editfield(0, 'gestincassi_depositdate_38', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '38')"></td>
+<td class="tabular" id="gestincassi_valuedate_38" ondblclick="editfield(0, 'gestincassi_valuedate_38', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '38')"></td>
+<td class="tabular" id="gestincassi_ourbankname_38" ondblclick="editfield(0, 'gestincassi_ourbankname_38', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '38')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_38"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=38')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_38"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/38/8160"><button type="submit">SO</button></form></td>
+</tr><tr><td>39</td><td class="tabular" id="gestincassi_amount_39">1586</td>
+    <td class="tabular" id="gestincassi_type_39">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_39"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=2353">F&G SRL</a></td>
+<script>
+    function gestincassi_statename_39_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_39').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_39').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_39').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_39').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_39" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_39', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '39')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_39">0852259918-03</td>
+<td class="tabular" id="gestincassi_bankname_39">BANCA MONTE DEI PASCHI DI SIENA S.P.A.</td>
+<td class="tabular" id="gestincassi_emissiondate_39" ondblclick="editfield(0, 'gestincassi_emissiondate_39', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '39')">2014-02-01</td>
+<td class="tabular" id="gestincassi_receiptdate_39" ondblclick="editfield(0, 'gestincassi_receiptdate_39', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '39')">2014-01-14</td>
+<td class="tabular" id="gestincassi_depositdate_39" ondblclick="editfield(0, 'gestincassi_depositdate_39', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '39')"></td>
+<td class="tabular" id="gestincassi_valuedate_39" ondblclick="editfield(0, 'gestincassi_valuedate_39', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '39')"></td>
+<td class="tabular" id="gestincassi_ourbankname_39" ondblclick="editfield(0, 'gestincassi_ourbankname_39', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '39')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_39"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=39')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_39"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/39/2353"><button type="submit">SO</button></form></td>
+</tr><tr><td>40</td><td class="tabular" id="gestincassi_amount_40">1586</td>
+    <td class="tabular" id="gestincassi_type_40">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_40"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=2353">F&G SRL</a></td>
+<script>
+    function gestincassi_statename_40_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_40').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_40').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_40').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_40').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_40" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_40', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '40')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_40">0852259919-04</td>
+<td class="tabular" id="gestincassi_bankname_40">BANCA MONTE DEI PASCHI DI SIENA S.P.A.</td>
+<td class="tabular" id="gestincassi_emissiondate_40" ondblclick="editfield(0, 'gestincassi_emissiondate_40', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '40')">2014-03-01</td>
+<td class="tabular" id="gestincassi_receiptdate_40" ondblclick="editfield(0, 'gestincassi_receiptdate_40', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '40')">2014-01-14</td>
+<td class="tabular" id="gestincassi_depositdate_40" ondblclick="editfield(0, 'gestincassi_depositdate_40', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '40')"></td>
+<td class="tabular" id="gestincassi_valuedate_40" ondblclick="editfield(0, 'gestincassi_valuedate_40', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '40')"></td>
+<td class="tabular" id="gestincassi_ourbankname_40" ondblclick="editfield(0, 'gestincassi_ourbankname_40', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '40')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_40"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=40')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_40"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/40/2353"><button type="submit">SO</button></form></td>
+</tr><tr><td>41</td><td class="tabular" id="gestincassi_amount_41">5203</td>
+    <td class="tabular" id="gestincassi_type_41">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_41"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=2918">Copran Costruzioni Srl</a></td>
+<script>
+    function gestincassi_statename_41_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_41').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_41').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_41').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_41').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_41" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_41', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '41')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_41">0033942037-12</td>
+<td class="tabular" id="gestincassi_bankname_41">BANCA POPOLARE DEL LAZIO SCRL</td>
+<td class="tabular" id="gestincassi_emissiondate_41" ondblclick="editfield(0, 'gestincassi_emissiondate_41', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '41')">2014-02-20</td>
+<td class="tabular" id="gestincassi_receiptdate_41" ondblclick="editfield(0, 'gestincassi_receiptdate_41', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '41')">2013-12-06</td>
+<td class="tabular" id="gestincassi_depositdate_41" ondblclick="editfield(0, 'gestincassi_depositdate_41', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '41')"></td>
+<td class="tabular" id="gestincassi_valuedate_41" ondblclick="editfield(0, 'gestincassi_valuedate_41', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '41')"></td>
+<td class="tabular" id="gestincassi_ourbankname_41" ondblclick="editfield(0, 'gestincassi_ourbankname_41', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '41')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_41"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=41')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_41"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/41/2918"><button type="submit">SO</button></form></td>
+</tr><tr><td>42</td><td class="tabular" id="gestincassi_amount_42">1830</td>
+    <td class="tabular" id="gestincassi_type_42">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_42"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=3794">RENAISSANCE TRAVEL ITALIA SRL</a></td>
+<script>
+    function gestincassi_statename_42_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_42').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_42').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_42').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_42').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_42" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_42', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '42')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_42">0267475088-10</td>
+<td class="tabular" id="gestincassi_bankname_42">CREDITO EMILIANO SPA</td>
+<td class="tabular" id="gestincassi_emissiondate_42" ondblclick="editfield(0, 'gestincassi_emissiondate_42', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '42')">2014-01-08</td>
+<td class="tabular" id="gestincassi_receiptdate_42" ondblclick="editfield(0, 'gestincassi_receiptdate_42', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '42')">2013-12-11</td>
+<td class="tabular" id="gestincassi_depositdate_42" ondblclick="editfield(0, 'gestincassi_depositdate_42', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '42')"></td>
+<td class="tabular" id="gestincassi_valuedate_42" ondblclick="editfield(0, 'gestincassi_valuedate_42', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '42')"></td>
+<td class="tabular" id="gestincassi_ourbankname_42" ondblclick="editfield(0, 'gestincassi_ourbankname_42', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '42')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_42"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=42')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_42"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/42/3794"><button type="submit">SO</button></form></td>
+</tr><tr><td>43</td><td class="tabular" id="gestincassi_amount_43">3172</td>
+    <td class="tabular" id="gestincassi_type_43">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_43"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=13862">T.T.M. s.n.c.</a></td>
+<script>
+    function gestincassi_statename_43_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_43').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_43').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_43').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_43').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_43" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_43', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '43')">sospeso</td>
+<td class="tabular" id="gestincassi_ref_43">0202917533-00</td>
+<td class="tabular" id="gestincassi_bankname_43">CASSA DI RISPARMIO DI PARMA E PIACENZA</td>
+<td class="tabular" id="gestincassi_emissiondate_43" ondblclick="editfield(0, 'gestincassi_emissiondate_43', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '43')">2014-02-18</td>
+<td class="tabular" id="gestincassi_receiptdate_43" ondblclick="editfield(0, 'gestincassi_receiptdate_43', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '43')">2014-01-31</td>
+<td class="tabular" id="gestincassi_depositdate_43" ondblclick="editfield(0, 'gestincassi_depositdate_43', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '43')"></td>
+<td class="tabular" id="gestincassi_valuedate_43" ondblclick="editfield(0, 'gestincassi_valuedate_43', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '43')"></td>
+<td class="tabular" id="gestincassi_ourbankname_43" ondblclick="editfield(0, 'gestincassi_ourbankname_43', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '43')">Non Assegnata</td>
+<td class="tabular" id="gestincassi_elimina_43"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=43')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_43"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/43/13862"><button type="submit">SO</button></form></td>
+</tr><tr><td>1</td><td class="tabular" id="gestincassi_amount_1">2562</td>
+    <td class="tabular" id="gestincassi_type_1">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_1"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=23766">SOCIETA' AGRICOLA SOL</a></td>
+
+<td class="tabular" id="gestincassi_statename_1" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_1', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '1')">versato</td>
+<td class="tabular" id="gestincassi_ref_1">0722011481-09</td>
+<td class="tabular" id="gestincassi_bankname_1">BANCA CREMONESE</td>
+<td class="tabular" id="gestincassi_emissiondate_1" ondblclick="editfield(0, 'gestincassi_emissiondate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '1')">2014-05-21</td>
+<td class="tabular" id="gestincassi_receiptdate_1" ondblclick="editfield(0, 'gestincassi_receiptdate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '1')">2014-05-05</td>
+<td class="tabular" id="gestincassi_depositdate_1" ondblclick="editfield(0, 'gestincassi_depositdate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '1')">2014-05-21</td>
+<td class="tabular" id="gestincassi_valuedate_1" ondblclick="editfield(0, 'gestincassi_valuedate_1', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '1')">2014-05-24</td>
+<td class="tabular" id="gestincassi_ourbankname_1" ondblclick="editfield(0, 'gestincassi_ourbankname_1', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '1')">BPM</td>
+<td class="tabular" id="gestincassi_elimina_1"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=1')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_1"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/1/23766"><button type="submit">SO</button></form></td>
+</tr><tr><td>5</td><td class="tabular" id="gestincassi_amount_5">2440</td>
+    <td class="tabular" id="gestincassi_type_5">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_5"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=8160">LASER SRL</a></td>
+<script>
+    function gestincassi_statename_5_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_5').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_5').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_5').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_5').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_5" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_5', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '5')">versato</td>
+<td class="tabular" id="gestincassi_ref_5">0009297539-04</td>
+<td class="tabular" id="gestincassi_bankname_5">BANCA DI CREDITO COOPERATIVO DI PIOVE DI SACCO SCR</td>
+<td class="tabular" id="gestincassi_emissiondate_5" ondblclick="editfield(0, 'gestincassi_emissiondate_5', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '5')">2014-04-30</td>
+<td class="tabular" id="gestincassi_receiptdate_5" ondblclick="editfield(0, 'gestincassi_receiptdate_5', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '5')">2014-03-05</td>
+<td class="tabular" id="gestincassi_depositdate_5" ondblclick="editfield(0, 'gestincassi_depositdate_5', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '5')">2014-05-21</td>
+<td class="tabular" id="gestincassi_valuedate_5" ondblclick="editfield(0, 'gestincassi_valuedate_5', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '5')">2014-05-24</td>
+<td class="tabular" id="gestincassi_ourbankname_5" ondblclick="editfield(0, 'gestincassi_ourbankname_5', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '5')">BPM</td>
+<td class="tabular" id="gestincassi_elimina_5"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=5')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_5"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/5/8160"><button type="submit">SO</button></form></td>
+</tr><tr><td>2</td><td class="tabular" id="gestincassi_amount_2">976</td>
+    <td class="tabular" id="gestincassi_type_2">ASS</td>
+    <td class="tabular" id="gestincassi_accountname_2"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=23766">SOCIETA' AGRICOLA SOL</a></td>
+<script>
+    function gestincassi_statename_2_check(part, arr) {
+        switch (part) {
+            case 1:
+            case '1':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return ((document.getElementById('gestincassi_receiptdate_2').innerHTML.trim() != '') && (document.getElementById('gestincassi_receiptdate_2').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 2:
+            case '2':
+                switch (arr) {
+                    case 3:
+                    case '3':
+                        return (true);
+                        break;
+
+                    case 4:
+                    case '4':
+                        return ((document.getElementById('gestincassi_depositdate_2').innerHTML.trim() != '') && (document.getElementById('gestincassi_depositdate_2').innerHTML.trim() != '0000-00-00'));
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            case 3:
+            case '3':
+                switch (arr) {
+                    case 2:
+                    case '2':
+                        return (true);
+                        break;
+
+                    default:
+                        return false;
+                }
+                break;
+
+            default:
+                return false;
+        }
+    }
+</script>
+<td class="tabular" id="gestincassi_statename_2" ondblclick="editfieldwithrestriction(0, 'gestincassi_statename_2', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '1', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '6', '2')">versato</td>
+<td class="tabular" id="gestincassi_ref_2">0548240545-08</td>
+<td class="tabular" id="gestincassi_bankname_2">BANCA POPOLARE DI SONDRIO</td>
+<td class="tabular" id="gestincassi_emissiondate_2" ondblclick="editfield(0, 'gestincassi_emissiondate_2', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '1', '2')">2014-04-08</td>
+<td class="tabular" id="gestincassi_receiptdate_2" ondblclick="editfield(0, 'gestincassi_receiptdate_2', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '2', '2')">2014-04-08</td>
+<td class="tabular" id="gestincassi_depositdate_2" ondblclick="editfield(0, 'gestincassi_depositdate_2', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '3', '2')">2014-04-09</td>
+<td class="tabular" id="gestincassi_valuedate_2" ondblclick="editfield(0, 'gestincassi_valuedate_2', false, 'date', '', '', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '4', '2')">2014-04-14</td>
+<td class="tabular" id="gestincassi_ourbankname_2" ondblclick="editfield(0, 'gestincassi_ourbankname_2', true, 'select', 'http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###', '2', 'http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###', '5', '2')">UNICREDIT</td>
+<td class="tabular" id="gestincassi_elimina_2"><button type="button" onclick="prforrecop('http://54.213.213.176/tsnw/application/services/delete.php?idop=1&idrecord=2')">del</button></td>
+<td class="tabular" id="gestincassi_dettagli_2"><form action="http://54.213.213.176/tsnw/public/incassi/sodetails/1/2/23766"><button type="submit">SO</button></form></td>
+</tr>-->
+
+</table>
+</body>
+</html>

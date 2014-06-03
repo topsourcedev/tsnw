@@ -24,7 +24,12 @@ namespace WolfMVC
         {
             return new Exception\Implementation("{$method} method not implemented");
         }
-        
+        /**
+         * 
+         * @param type $conf
+         * @return \WolfMVC\Database\Connector\Mysql
+         * @throws Exception\Argument
+         */
         public function initialize($conf)
         {
 //            echo "conf = ".$conf."<br>";

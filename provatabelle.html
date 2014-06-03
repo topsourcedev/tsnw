@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<!--
+Questo software è stato creato da Alberto Brudaglio per TopSource S.r.l. Tutti i diritti sono riservati.
+This software has ben developed by Alberto Brudaglio for Topsource S.r.l. All rights reserved.
+-->
+<html>
+    <head>
+        <title>Prova tabelle ordinabili</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="./public/js/jquery.js"></script>
+        <script src="./public/js/wolfutils.js"></script>
+        <script src="./public/js/wolfjs.js"></script>
+        <script>
+
+            function censtab() {
+                var tabs = $("table[operateon = 'order']");
+                console.log("Tabelle ordinabili trovate:");
+                console.log(tabs);
+                tabs.each(function() {
+                    console.log($(this).attr('id'));
+//                   var headtr = $("#"+$(this).attr('id')+" tr:eq(0)");
+                    var tableid = $(this).attr('id');
+                    var ths = $("#" + tableid + " th");
+                    console.log(ths);
+                    console.log("//////7");
+                    var thscont = $("#" + tableid + " th").map(function() {
+                        return $(this).html();
+                    });
+                    console.log(thscont);
+                    ths.each(function(i) {
+//                        console.log($(this).attr('otdatatype'));
+                        var dt = $(this).attr('otdatatype');
+                        if (typeof (dt) === 'undefined')
+                            dt = "";
+                        $(this).html("<a href=\"javascript:ordertable(" + i + ",'" + dt + "');\">" + thscont[i] + "</a>");
+                        console.log($(this).html());
+//                        var dt = $(this).attr('otdatatype');
+//                        var cont = $(this).attr('otdatatype');
+//                        if (typeof (dt) === 'undefined')
+//                            dt = "";
+//                        switch(dt){
+//                            case "date":
+//                                
+//                                break;
+//                            default:
+//                                
+//                        }
+                    });
+                });
+            }
+
+
+
+            function genera() {
+                var tabella = document.getElementById("ordertable_1");
+                if (!tabella) {
+                    console.log("non trovo tabella");
+                    return;
+                }
+                for (var i = 0; i < 10; i++) {
+                    var rowCount = tabella.rows.length;
+                    var row = tabella.insertRow(rowCount);
+                    var cell1 = row.insertCell(0);
+                    cell1.innerHTML = 1 * 10 + i;
+                    var cell2 = row.insertCell(1);
+                    cell2.innerHTML = 2 * 10 - i;
+                    var cell3 = row.insertCell(2);
+                    cell3.innerHTML = 3 * 10 + i;
+                    var cell4 = row.insertCell(3);
+                    cell4.innerHTML = 4 * 10 - i;
+                }
+            }
+
+            function caldate2string(date, flag) {
+                //date must be of type date
+                //flag must be of type (1/2), 1=yyyy-mm-dd, 2=dd-mm-yyyy
+                flag = Number(flag);
+                if (date instanceof Date && !isNaN(date.valueOf()) && !isNaN(flag) && (flag >= 1) && (flag <= 2)) {
+                    var dd = date.getDate();
+                    if (dd < 10)
+                        dd = "0" + dd;
+                    var mm = 1 + Number(date.getMonth());
+                    if (mm < 10)
+                        mm = "0" + mm;
+                    var yy = date.getFullYear();
+                    if (yy < 10)
+                        yy = "000" + yy;
+                    else if (yy < 100)
+                        yy = "00" + yy;
+                    else if (yy < 1000)
+                        yy = "0" + yy;
+                    if (flag == 1)
+                        return yy + "-" + mm + "-" + dd;
+                    else
+                        return dd + "-" + mm + "-" + yy;
+                }
+                else
+                {
+                    //TODO :: should throw an exception!
+                    return date;
+                }
+            }
+
+            function string2caldate(string, flag) {
+                //string must be dd-mm-yyyy or yyyy-mm-dd
+                //flag must be of type (0/1/2), 0=auto, 1=yyyy-mm-dd, 2=dd-mm-yyyy
+                flag = Number(flag);
+                if (string.length == 10) {
+                    switch (flag) {
+                        case 0:
+                        case '0':
+                            //try to understand format
+                            var array = string.split("-");
+                            if (array.length != 3) {
+                                return new Array(-1, string); //TODO:: throw exception!
+                            }
+                            else {
+                                if ((array[0].length == 2) && (array[1].length == 2) && (array[2].length == 4)) {
+                                    return new Array(2, new Date(array[2] + "-" + array[1] + "-" + array[0]));
+                                }
+                                else if ((array[0].length == 4) && (array[1].length == 2) && (array[2].length == 2)) {
+                                    return new Array(1, new Date(string));
+                                }
+                            }
+                            break;
+                        case 1:
+                        case '1':
+
+                            return new Array(1, new Date(string));
+                            break;
+                        case 2:
+                        case '2':
+                            var array = string.split("-");
+                            return new Array(2, Date(array[2] + "-" + array[1] + "-" + array[0]));
+                            break;
+
+                    }
+                }
+            }
+
+            function ordertable(col, flag) {
+                if (typeof (flag) === 'undefined')
+                    flag = "";
+                var tabella = document.getElementById("ordertable_1");
+                if (!tabella) {
+                    console.log("no tables found");
+                    return;
+                }
+                var nrows = 0;
+                var ncells = 0;
+                var rows = tabella.rows;
+                var data = new Array();
+                var format = new Array();
+                nrows = rows.length;
+                for (var i = 1; i < rows.length; i++) {
+
+                    var cells = rows[i].cells;
+                    data[i] = new Array();
+                    format[i] = new Array();
+                    for (var j = 0; j < cells.length; j++) {
+                        ncells = Math.max(ncells, j);
+                        if (j == col) {
+                            switch (flag) {
+                                case "date":
+                                    var res = string2caldate(cells[j].innerHTML, 0);
+                                    data[i][j] = res[1];
+                                    if ((typeof (format[i][j]) === 'undefined') || is_nullformat[i][j] == null)
+                                        format[i][j] = new Array();
+                                    format[i][j]["dateformat"] = res[0];
+                                    break;
+                                default:
+                                    data[i][j] = cells[j].innerHTML;
+                            }
+                        }
+                        else {
+                            data[i][j] = cells[j].innerHTML;
+                        }
+
+
+                    }
+
+                }
+                var sort = function(a, b) {
+                    if (a[col] < b[col])
+                        return -1;
+                    else
+                        return 1;
+                }
+                data.sort(sort);
+                for (var i = nrows - 1; i > 0; i--) {
+                    tabella.deleteRow(i);
+                }
+                for (var i = 1; i < 10000000; i++) {
+                }
+                for (var i = 1; i < nrows; i++) {
+                    var row = tabella.insertRow(i);
+                    for (var j = 0; j <= ncells; j++) {
+                        var cell = row.insertCell(j);
+                        if (j == col) {
+                            switch (flag) {
+                                case "date":
+                                    var date = data[i - 1][j];
+                                    console.log("riscrivo data");
+                                    console.log(date);
+                                    console.log(caldate2string(date));
+                                    cell.innerHTML = caldate2string(date, (format[i][j]["dateformat"] ? format[i][j]["dateformat"] : 1));
+                                    break;
+                                default:
+                                    cell.innerHTML = data[i - 1][j];
+                            }
+                        }
+                        else {
+                            cell.innerHTML = data[i - 1][j];
+                        }
+                    }
+                }
+            }
+        </script>
+
+
+    </head>
+    <body onload="wolf_cens();">
+        <div id="provadata" onclick="javascript: console.log(string2caldate(this.innerHTML, 2));">12-11-2013</div>
+        <ul id="sortable1" class="connectedSortable">
+            <li >Campi disponibili</li>
+            <li class="ui-state-default">Intest 0</li>
+            <li class="ui-state-default">Intest 1</li>
+            <li class="ui-state-default">Intest 2</li>
+            <li class="ui-state-default">Date</li>
+        </ul>
+
+        <ul id="sortable2" class="connectedSortable">
+            <li class="ui-state-highlight">Ordina per</li>
+        </ul>   
+        <table width="100%" orderingtable>
+            <tr class="ordertable" id="ordertable_tr1">
+                <th otdatatype="number">#</th>
+                <th>dato1</th>
+                <th>dato2</th>
+                <th otdatatype="date">dato3</th>
+
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>numero5</td>
+                <td>SO555</td>
+                <td>05-05-2005</td>                
+            </tr>
+
+            <tr>
+                <td>3</td>
+                <td>numero3</td>
+                <td>SO333</td>
+                <td>03-03-2003</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td>numero43</td>
+                <td>SO443</td>
+                <td>04-03-2043</td>                
+            </tr>
+
+            <tr>
+                <td>34</td>
+                <td>numero34</td>
+                <td>SO334</td>
+                <td>03-04-2034</td>                
+            </tr>
+
+
+
+        </table>
+    </body>
+</html>

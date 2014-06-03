@@ -9,7 +9,7 @@ use WolfMVC\StringMethods as StringMethods;
 use WolfMVC\Model\Exception as Exception;
 
     /**
-     * Rappresenta una tabella db
+     * E' un'astrazione di una tabella di db.
      */
     class Model extends Base {
 
@@ -72,6 +72,22 @@ use WolfMVC\Model\Exception as Exception;
         protected $_errors = array();
         protected $_columns;
         protected $_primary;
+
+        /**
+         *
+         * @var mixed
+         */
+        protected $_source = "";
+
+        public function setSource($source) {
+            if (!($source instanceof Model\Datasource)) {
+                throw new Exception\Datasource();
+            }
+            else {
+                $this->_source = $datasource;
+            }
+            return $this;
+        }
 
         public function _getExceptionForImplementation($method) {
             return new Exception\Implementation("{$method} method not implemented");
@@ -178,18 +194,41 @@ use WolfMVC\Model\Exception as Exception;
             return $this->_table;
         }
 
+        /**
+         * 
+         * @return WolfMVC\Database\Connector
+         * @throws Exception\Connector
+         */
         public function getConnector() {
-            if (empty($this->_connector)) {
-                $database = Registry::get("database_vtiger"); /////////////////////////////////////////////////////////////////
 
-                if (!$database) {
-                    throw new Exception\Connector("No connector availaible");
+            if ($this->_source === "") {
+                if (empty($this->_connector)) {
+                    $database = Registry::get("database_vtiger"); /////////////////////////////////////////////////////////////////
+
+                    if (!$database) {
+                        throw new Exception\Connector("No connector availaible");
+                    }
+
+                    $this->_connector = $database->initialize();
                 }
 
-                $this->_connector = $database->initialize();
+                return $this->_connector;
             }
+            else{
+                if (empty($this->_connector)) {
+//                    $this->_source->get
+                    
+                    $database = Registry::get("database_vtiger"); /////////////////////////////////////////////////////////////////
 
-            return $this->_connector;
+                    if (!$database) {
+                        throw new Exception\Connector("No connector availaible");
+                    }
+
+                    $this->_connector = $database->initialize();
+                }
+
+                return $this->_connector;
+            }
         }
 
         public function getColumns() {
