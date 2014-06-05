@@ -1,54 +1,4 @@
-/* 
- * Questo software è stato creato da Alberto Brudaglio per TopSource S.r.l. Tutti i diritti sono riservati.
- * This software has ben developed by Alberto Brudaglio for Topsource S.r.l. All rights reserved.
- */
-
-
-function wolf_cens() {
-    var tabs = $("table[orderingtable]");
-    tabs.each(function() {
-        console.log($(this).attr('id'));
-//                   var headtr = $("#"+$(this).attr('id')+" tr:eq(0)");
-        var tableid = $(this).attr('id');
-        if (typeof (tableid) === "undefined") {
-            var rdnid = random_char_string_for_id(10, "wolfot_");
-            $(this).prop('id', rdnid);
-            tableid = rdnid;
-        }
-        //now i have a table that can be analyzed and has an id = tableid;
-        //call initializer
-        wolf_ot_initialize(tableid);
-
-    });
-}
-
-function wolf_ot_initialize(tableid) {
-    var table = $("#" + tableid);
-    if (!table.length)
-        return;
-    var ths = $("#" + tableid + " th");
-    var thscont = $("#" + tableid + " th").map(function() {
-        return $(this).html();
-    });
-    ths.each(function(i) {
-        var dt = $(this).attr('otdatatype');
-        if (typeof (dt) === 'undefined')
-            dt = "text";
-//        $(this).bind("click", function(event) {
-//            ordertable3(tableid, new Array(Number(i)), new Array(true), new Array(dt));
-//        });
-          
-
-        $(this).html("<a href=\"javascript:ordertable('" + tableid + "', new Array('"+i+"') , new Array(true),new Array('" +dt + "'));\">" + thscont[i] + "</a>");
-    });
-    var trs = table.find("tr:not(:eq(0))");
-    trs.each(function(i) {
-        $(this).attr("wolfot_row", i);
-    });
-}
-
-
-function ordertable(tableid, cols, ords, flags) {
+function ordertable3(tableid, cols, ords, flags) {
     if ((typeof (cols.length) == "undefined") || (typeof (ords.length) == "undefined") || (typeof (flags.length) == "undefined")) {
         return; // cols, ords & flags must be array
     }
@@ -59,30 +9,44 @@ function ordertable(tableid, cols, ords, flags) {
         cols[i] = Number(cols[i]);
         ords[i] = (ords[i] == true);
     }
+    console.log(cols);
+    console.log(ords);
+    console.log("----------------------");
     var indexindex = Number(Math.max.apply(Math, cols) + 1);
+    console.log(indexindex);
     var data = new Array();
     var format = new Array();
     var table = $("#" + tableid);
+//    console.log(table);
     var hrow = table.find("tr:eq(0)");
+//    console.log(hrow);
     var intestazione = "";
     hrow.find("th").each(function() {
         intestazione += $(this).html() + " || ";
     })
+//    console.log(intestazione);
     rows = table.find("tr:gt(0)");
+//    console.log(rows);
     rows.each(function(i) {
+//        console.log($(this).find("td:eq(0)").html());
         data[i] = new Array();
         for (var j = 0; j < cols.length; j++) {
             data[i][cols[j]] = $(this).find("td:eq(" + cols[j] + ")").html();
         }
         data[i][Number(indexindex)] = i;
     });
+    console.log(data);
     var msort = function(a, b) {
+        console.log(a);
+        console.log("VS");
+        console.log(b);
         for (var i = 0; i < cols.length; i++) {
             var k = cols[i];
             if (ords[i]) { //ASC
                 switch (flags[i]) {
                     case '':
                     case 'text':
+                        console.log(a[k] + " VS " + b[k]);
                         var comp = strcomp(a[k],b[k]);
                         if (comp == 1)
                             return 1;
@@ -95,7 +59,11 @@ function ordertable(tableid, cols, ords, flags) {
                         }
                         break;
                     case 'date':
+                        console.log(string2caldate(a[k],0));
+                        console.log("VS");
+                        console.log(string2caldate(b[k],0));
                         if (strdatecomp(a[k],b[k]) == 1) {
+                            console.log(string2caldate(a[k],0) +">"+ string2caldate(b[k],0))
                             return 1;
                         }
                         break;
@@ -110,6 +78,7 @@ function ordertable(tableid, cols, ords, flags) {
                 switch (flags[i]) {
                     case '':
                     case 'text':
+                        console.log(a[k] + " VS " + b[k]);
                         var comp = strcomp(a[k],b[k]);
                         if (comp == -1)
                             return 1;
@@ -140,37 +109,11 @@ function ordertable(tableid, cols, ords, flags) {
     data.sort(msort)
 //    console.log(data);
 
+    console.log("-----------------------------");
+    var reorder = new Array();
     for (var i = data.length - 1; i >= 0; i--) {
         table.prepend(rows.eq(data[i][indexindex]));
+//        table.prepend(rows.filter("tr[wolfot_row='" + data[i][indexindex] + "']"));
     }
     table.prepend(hrow);
-}
-
-function swaprow(tableid) {
-    var table = $("#" + tableid);
-    console.log(table);
-}
-
-
-
-
-
-
-
-
-function wolfot_generateTable(data){
-    
-}
-
-
-
-function provavalori(){
-    var test = new Array(null,"null","undefined",0,1,0.56,true,false,"","a","abc",new Array(),new Array(1), new Array(new Array()));
-    var out = "";
-    out += ("valore|var.length|typeof(var.length)")+"\n";
-    out +=(test[0]+"|errore|errore")+"\n";
-    for (var i= 1; i<test.length; i++){
-        out +=(test[i]+"|"+test[i].length+"|"+typeof(test[i].length))+"\n";
-    }
-    console.log(out);
 }

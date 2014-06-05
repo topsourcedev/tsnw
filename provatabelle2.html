@@ -11,123 +11,6 @@ This software has ben developed by Alberto Brudaglio for Topsource S.r.l. All ri
         <script src="./public/js/jquery.js"></script>
         <script src="./public/js/wolfutils.js"></script>
         <script src="./public/js/wolfjs.js"></script>
-        <script>
-
-            
-            
-
-
-
-            function genera() {
-                var tabella = document.getElementById("ordertable_1");
-                if (!tabella) {
-                    console.log("non trovo tabella");
-                    return;
-                }
-                for (var i = 0; i < 10; i++) {
-                    var rowCount = tabella.rows.length;
-                    var row = tabella.insertRow(rowCount);
-                    var cell1 = row.insertCell(0);
-                    cell1.innerHTML = 1 * 10 + i;
-                    var cell2 = row.insertCell(1);
-                    cell2.innerHTML = 2 * 10 - i;
-                    var cell3 = row.insertCell(2);
-                    cell3.innerHTML = 3 * 10 + i;
-                    var cell4 = row.insertCell(3);
-                    cell4.innerHTML = 4 * 10 - i;
-                }
-            }
-
-           
-
-            function ordertable(col, flag) {
-                if (typeof (flag) === 'undefined')
-                    flag = "";
-                var tabella = document.getElementById("ordertable_1");
-                if (!tabella) {
-                    console.log("no tables found");
-                    return;
-                }
-                var nrows = 0;
-                var ncells = 0;
-                var rows = tabella.rows;
-                var data = new Array();
-                var format = new Array();
-                nrows = rows.length;
-                for (var i = 1; i < rows.length; i++) {
-
-                    var cells = rows[i].cells;
-                    data[i] = new Array();
-                    format[i] = new Array();
-                    for (var j = 0; j < cells.length; j++) {
-                        ncells = Math.max(ncells, j);
-                        if (j == col) {
-                            switch (flag) {
-                                case "date":
-                                    var res = string2caldate(cells[j].innerHTML, 0);
-                                    data[i][j] = res[1];
-                                    if ((typeof (format[i][j]) === 'undefined') || format[i][j] == null)
-                                        format[i][j] = new Array();
-                                    format[i][j]["dateformat"] = res[0];
-                                    break;
-                                case "number":
-                                    data[i][j] = Number(cells[j].innerHTML);
-                                    break;
-                                    
-                                default:
-                                    data[i][j] = cells[j].innerHTML;
-                            }
-                        }
-                        else {
-                            data[i][j] = cells[j].innerHTML;
-                        }
-
-
-                    }
-
-                }
-                var sort = function(a, b) {
-                    if (a[col] < b[col])
-                        return -1;
-                    else
-                        return 1;
-                }
-                data.sort(sort);
-                for (var i = nrows - 1; i > 0; i--) {
-                    tabella.deleteRow(i);
-                }
-                for (var i = 1; i < 10000000; i++) {
-                }
-                for (var i = 1; i < nrows; i++) {
-                    var row = tabella.insertRow(i);
-                    for (var j = 0; j <= ncells; j++) {
-                        var cell = row.insertCell(j);
-                        if (j == col) {
-                            switch (flag) {
-                                case "date":
-                                    var date = data[i - 1][j];
-                                    console.log("riscrivo data");
-                                    console.log(date);
-                                    console.log(caldate2string(date));
-                                    cell.innerHTML = caldate2string(date, (format[i][j]["dateformat"] ? format[i][j]["dateformat"] : 1));
-                                    break;
-                                default:
-                                    cell.innerHTML = data[i - 1][j];
-                            }
-                        }
-                        else {
-                            cell.innerHTML = data[i - 1][j];
-                        }
-                    }
-                }
-            }
-            
-            //table = id della tabella
-             
-            
-            
-            
-        </script>
 
 
     </head>
@@ -136,7 +19,13 @@ This software has ben developed by Alberto Brudaglio for Topsource S.r.l. All ri
         <table class="ordertable" width="100%" orderingtable id="ciccio">
 
 
-            <tr class="ordertable" id="ordertable_tr1"><th otdatatype="number">#</th><th otdatatype="number">Importo</th><th>Tipo</th><th>Cliente</th><th>Stato</th><th>Riferimento</th><th>Banca</th><th otdatatype="date">Data emissione</th><th otdatatype="date">Data ricezione</th><th otdatatype="date">Data versamento</th><th otdatatype="date">Data valuta</th><th>Ns. Banca</th></tr>
+            <tr class="ordertable" id="ordertable_tr1">
+                <th otdatatype="number">#</th>
+                <th otdatatype="number">Importo</th>
+                <th>Tipo</th><th>Cliente</th><th>Stato</th>
+                <th>Riferimento</th><th>Banca</th><th otdatatype="date">Data emissione</th>
+                <th otdatatype="date">Data ricezione</th><th otdatatype="date">Data versamento</th>
+                <th otdatatype="date">Data valuta</th><th>Ns. Banca</th></tr>
             <tr><td>3</td><td class="tabular" id="gestincassi_amount_3">4490</td>
                 <td class="tabular" id="gestincassi_type_3">ASS</td>
                 <td class="tabular" id="gestincassi_accountname_3"><a href="http://54.213.213.176/vtigercrm/index.php?module=Accounts&action=DetailView&record=23766">SOCIETA' AGRICOLA SOL</a></td>
