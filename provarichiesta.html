@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--
+Questo software è stato creato da Alberto Brudaglio per TopSource S.r.l. Tutti i diritti sono riservati.
+This software has ben developed by Alberto Brudaglio for Topsource S.r.l. All rights reserved.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="./public/js/jquery.js"></script>
+        <script>
+            function request() {
+                var url = $("#url").val() + ".ws";
+                $("#console").html("Richiesta inviata: " + url + "\n<br>");
+                var aj = $.ajax({
+                    url: url,
+                    headers: {
+                        "Accept": "application/json, text/html;q=0.5",
+                        "Content-Type": "application/json",
+                        "X-WolfFWK-Operation": "describe"
+                    },
+                    async: true,
+                    done: function(data) {
+                        var cons = $("#console").html();
+                        console.log(data);
+//                        console.log(textStatus);
+//                        console.log(request);
+//                        cons += "Status: "+textStatus+"\n<br>";
+//                        cons += "Content-type: "+request.getResponseHeader('Content-Type')+"\n<br>";
+//                        cons += "Content-type: "+request.getAllResponseHeaders()+"\n<br>";
+//                        $("#console").html(cons + "Response: "+(request.responseText).replace(",", ",<br>")+"\n<br>");
+
+                    },
+                    statusCode: {
+                        200: function(data, textStatus, request) {
+                            var cons = $("#console").html();
+                            console.log(data);
+                            console.log(textStatus);
+                            console.log(request);
+                            cons += "Status: 200 " + textStatus + "\n<br>";
+                            cons += "Content-type: " + request.getResponseHeader('Content-Type') + "\n<br>";
+                            cons += "Content-type: " + request.getAllResponseHeaders() + "\n<br>";
+                            $("#console").html(cons + "Response: " + (request.responseText).replace(",", ",\n<br>") + "\n<br>");
+                        },
+                        404: function(data) {
+                            $("#console").html("Risorsa non trovata\n" + data);
+                        },
+                        500: function(data) {
+                            $("#console").html("Errore 500\n" + data.toString());
+                        }
+                    }
+//                    error: function() {
+//                        $("#console").html("Il server ha risposto con il seguente errore:\n\n");
+//                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <input type="text" id="url" size="60" value="http://localhost/tsnw/public/incassi">.ws<br><br>
+        <button type="button" onclick="request()">Richiesta</button><br><br>
+        <div id="console">Risposta</div>
+    </body>
+</html>

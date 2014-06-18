@@ -17,7 +17,6 @@ namespace WolfMVC {
          */
         private static $_objects = array(
           "database" => array(),
-          "init_database" => array(),
           "modules" => array(),
           "language" => array()
         );

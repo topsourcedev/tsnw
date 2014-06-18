@@ -3,10 +3,10 @@
 namespace WolfMVC {
 
     use WolfMVC\Base as Base;
-use WolfMVC\View as View;
-use WolfMVC\Registry as Registry;
-use WolfMVC\Template as Template;
-use WolfMVC\Controller\Exception as Exception;
+    use WolfMVC\View as View;
+    use WolfMVC\Registry as Registry;
+    use WolfMVC\Template as Template;
+    use WolfMVC\Controller\Exception as Exception;
 
     /**
      * Classe base di tutti i controller
@@ -75,8 +75,11 @@ use WolfMVC\Controller\Exception as Exception;
             return new Exception\Argument("Invalid argument");
         }
 
+        public function nameofthiscontroller(){
+            $router = \WolfMVC\Registry::get("router");
+            return $router -> getController();
+        }
         
-
         public function index() {
             echo Registry::get("language")->sh("WolfMVC.Controller.genericindexmethod");
         }
@@ -120,6 +123,58 @@ use WolfMVC\Controller\Exception as Exception;
 
         public function __destruct() {
             $this->render();
+        }
+
+        public function ws___describe() {
+            $this->setWillRenderActionView(false);
+            $this->setWillRenderLayoutView(false);
+
+//            $view = $this->getActionView();
+            header('Content-type: application/json');
+            $ret = array();
+            $ret[0] = "No WS available at such address";
+            $ret['RequestAccept'] = $this->parseAcceptHeader();
+            echo json_encode($ret);
+            exit;
+//            $view->set("data", json_encode("No WS available at such address"));
+        }
+
+        public function parseAcceptHeader() {
+            $hdr = $_SERVER['HTTP_ACCEPT'];
+            $accept = array();
+            foreach (preg_split('/\s*,\s*/', $hdr) as $i => $term) {
+                $o = new \stdclass;
+                $o->pos = $i;
+                if (preg_match(",^(\S+)\s*;\s*(?:q|level)=([0-9\.]+),i", $term, $M)) {
+                    $o->type = $M[1];
+                    $o->q = (double) $M[2];
+                }
+                else {
+                    $o->type = $term;
+                    $o->q = 1;
+                }
+                $accept[] = $o;
+            }
+            usort($accept, function ($a, $b) {
+                /* first tier: highest q factor wins */
+                $diff = $b->q - $a->q;
+                if ($diff > 0) {
+                    $diff = 1;
+                }
+                else if ($diff < 0) {
+                    $diff = -1;
+                }
+                else {
+                    /* tie-breaker: first listed item wins */
+                    $diff = $a->pos - $b->pos;
+                }
+                return $diff;
+            });
+            $accept_data = array();
+            foreach ($accept as $a) {
+                $accept_data[$a->type] = $a->type;
+            }
+            return $accept_data;
         }
 
         public function __construct($options = array()) {

@@ -10,9 +10,15 @@ namespace WolfMVC {
     /**
      * Semantic Multi Model
      */
-    class SMM extends Base {
+    class Smm extends Base {
         
-        
+        /**
+         * @read
+         * @var array I campi di cui è composto un dato
+         * Struttura: array: un elemento per ogni campo. Ogni elemento è un array fatto come segue:
+         * [nome_campo, etichetta_campo, 
+         */
+        protected $_fields;
         
         
         // imposta il campo identificativo

@@ -11,6 +11,7 @@ namespace WolfMVC
     class Database extends Base
     {
         /**
+        * @var string
         * @readwrite
         */
         protected $_type;
@@ -30,26 +31,24 @@ namespace WolfMVC
          * @return \WolfMVC\Database\Connector\Mysql
          * @throws Exception\Argument
          */
-        public function initialize($conf)
+        public function initialize($name)
         {
-//            echo "conf = ".$conf."<br>";
-            if (!$this->type)
+            if (!$this->_type)
             {
                 $configuration = \WolfMVC\Registry::get("configuration");
                 if ($configuration)
                 {
-                    $configuration = $configuration->initialize(); //restituisce il driver
-                    $parsed = $configuration->parse("application/configuration/".$conf);
-                    if (!empty($parsed->database->default) && !empty($parsed->database->default->type))
+                    $parsed = $configuration->getParsed();
+                    $parsed = $parsed[APP_PATH."/application/configuration/database"];
+                    if (!empty($parsed->database->$name) && !empty($parsed->database->$name->type))
                     {
-                        $this->type = $parsed->database->default->type;
-                        unset($parsed->database->default->type);
-                        $this->options = (array) $parsed->database->default;
+                        $this->_type = $parsed->database->$name->type;
+                        unset($parsed->database->$name->type);
+                        $this->options = (array) $parsed->database->$name;
                     }
                 }
             }
-            
-            if (!$this->type)
+            if (!($this->type))
             {
                 throw new Exception\Argument("Invalid type");
             }

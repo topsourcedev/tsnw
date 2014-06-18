@@ -11,7 +11,7 @@ namespace WolfMVC\Configuration
     class Driver extends Base
     {
         /**
-         *
+         * @read
          * @var array Il valore ultimo del parse di una configurazione.
          */
         protected $_parsed = array();
