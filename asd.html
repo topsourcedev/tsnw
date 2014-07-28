@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <style>
+            #container {
+                width: 100%;
+                height: 100%;
+            }
+            .divfield {
+                position: absolute;
+                width: 200px;
+                height: 150px;
+                top: 30%;
+                left: 30%;
+                /*border: 1px solid blueviolet;*/
+
+            }
+            .verticallinefield {
+                position: absolute;
+                left: 15px;
+                top: 30px;
+                background: black;
+                width: 2px;
+                height: 150px; 
+            }
+            .titlefield {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 200px;
+                height: 30px;
+                background: red;
+                border: 1px black dotted;
+                border-radius: 20px;
+                text-align: center;
+                font: 20px sans-serif;
+                line-height: 30px;
+                box-shadow: 5px 5px 10px #999999;
+            }
+
+            .bottomfield {
+                position: absolute;
+                top: 150px;
+                left: 20px;
+                width: 200px;
+                height: 30px;
+                font: 16px sans-serif;
+                color: grey;
+                margin: 5px;
+            }
+            .rolefield {
+                position: absolute;
+                top: 30px;
+                left: 30px;
+                width: 200px;
+                height: 30px;
+                font: 18px sans-serif;
+                margin: 5px;
+            }
+            .filterfield {
+                position: absolute;
+                top: 60px;
+                left: 30px;
+                width: 200px;
+                height: 30px;
+                font: 18px sans-serif;
+                margin: 5px;
+            }
+            .opfield {
+                position: absolute;
+                top: 90px;
+                left: 30px;
+                width: 200px;
+                height: 30px;
+                font: 18px sans-serif;
+                margin: 5px;
+            }
+            .openfield {
+                cursor: default;
+                position: absolute;
+                top: 8px;
+                left: 160px;
+                width: 15px;
+                height: 15px;
+                text-align: center;
+                vertical-align: middle;
+                z-index: 3;
+                font: sans-serif 18px;
+                border: 1px solid black;
+            }
+            .deletefield {
+                cursor: default;
+                position: absolute;
+                top: 8px;
+                left: 175px;
+                width: 15px;
+                height: 15px;
+                text-align: center;
+                vertical-align: middle;
+                z-index: 3;
+                font: 18px sans-serif ;
+                border: 1px solid black;
+            }
+        </style>
+        <script type="text/javascript" src="./public/js/jquery.js"></script>
+        <script type="text/javascript" src="./public/js/jquery-ui.js"></script>
+
+        <script>
+            $(document).delegate(".openfield", "click", function() {
+                var divfield = $(this).parent(".divfield");
+                var open = $(this).attr("open");
+                if (typeof (open) === "undefined" || open === "close") {
+                    divfield.children().show();
+                    $(this).attr("open", "open");
+                    $(this).html("-");
+                }
+                else if (open === "open") {
+                    $(this).removeAttr("open");
+                    divfield.children().not(".openfield")
+                            .not(".deletefield").not(".titlefield").hide();
+                    $(this).html("+");
+                }
+
+            });
+            $(document).delegate(".deletefield", "click", function() {
+                var divfield = $(this).parent(".divfield");
+                divfield.empty().remove();
+            });
+            $(document).ready(function() {
+                $(".divfield").draggable({
+                    grid: [5, 5],
+                    containment: $(".container"),
+                    zIndex: 1000
+                })
+            }
+            );
+        </script>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    </head>
+    <body>
+        <div id="container">
+
+            <div class="divfield">
+                <div class="openfield">
+                    -
+                </div>
+                <div class="deletefield">
+                    x
+                </div>
+                <div class="verticallinefield"></div>
+                <div class="titlefield">
+                    titolo
+                </div>
+                <div class="bottomfield">
+                    <p>vtiger_account</p>
+                </div>
+                <div class="rolefield">
+                    <p>Ruolo</p>
+                </div>
+                <div class="filterfield">
+                    <p>Filtri</p>
+                </div>
+                <div class="opfield">
+                    <p>Operazioni</p>
+                </div>
+            </div>
+
+
+
+        </div>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+documentare:
+
+manutenzione del sito:
+systemstatus = "ON"|"MAINTENANCE"|"OFF"

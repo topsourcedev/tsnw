@@ -26,16 +26,17 @@ WolfMVC\Core::initialize();
 WolfMVC\Registry::set("censor", new \WolfMVC\Censor());
 
 $configuration = new WolfMVC\Configuration(array(
-  "type" => "ini"
-  ));
+    "type" => "ini"
+        ));
 try {
     WolfMVC\Registry::set("configuration", $configuration->initialize());
     WolfMVC\Registry::get("configuration")->parse(APP_PATH . "/application/configuration/database");
     WolfMVC\Registry::get("configuration")->parse(APP_PATH . "/application/configuration/cache");
     WolfMVC\Registry::get("configuration")->parse(APP_PATH . "/application/configuration/session");
+    WolfMVC\Registry::set("layoutenvvars", WolfMVC\Registry::get("configuration")->parse("configuration/layoutenvvars"));
+    WolfMVC\Registry::set("systemstatus", WolfMVC\Registry::get("configuration")->parse("configuration/systemstatus"));
 //    WolfMVC\Registry::get("configuration")->initialize()->parse(APP_PATH . "/application/configuration/prova");
-}
-catch (\Exception $e) {
+} catch (\Exception $e) {
     die('Si &eacute; verificato un errore.<br> ' . $e->getMessage());
 }
 
@@ -44,45 +45,51 @@ try {
         $database = new WolfMVC\Database();
         WolfMVC\Registry::set("database_" . $db[0], $database->initialize($db[0]));
     }
-}
-catch (\WolfMVC\Configuration\Exception\Syntax $e) {
+} catch (\WolfMVC\Configuration\Exception\Syntax $e) {
     echo $e->getMessageType();
     echo $e->getMessage();
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     echo $e->getMessage();
 }
-//try {
-//    foreach (\WolfMVC\Censor::get("language") as $key => $lang) {
-//        $lang = new WolfMVC\Lang($lang);
-//        WolfMVC\Registry::set("language", $lang);
-//        WolfMVC\Base::$_lang = WolfMVC\Registry::get("language");
-//    }
-//}
-//catch (\WolfMVC\Configuration\Exception\Syntax $e) {
-//    echo $e->getMessageType();
-//    echo $e->getMessage();
-//}
-//catch (Exception $e) {
-//    echo $e->getMessage();
-//}
-//try {
-//    foreach (\WolfMVC\Censor::get("module") as $key => $mod) {
-//        if (is_file(APP_PATH . "/application/configuration/modules/" . $mod[1] . ".ini")) {
-//            $array = WolfMVC\Registry::get("module_" . $mod[1]);
-//            if (!is_array($array))
-//                $array = array("conf" =>APP_PATH . "/application/configuration/modules/" . $mod[1] . ".ini");
-//            WolfMVC\Registry::set("module_" . $mod[1], $array);
-//        }
-//    }
-//}
-//catch (\WolfMVC\Configuration\Exception\Syntax $e) {
-//    echo $e->getMessageType();
-//    echo $e->getMessage();
-//}
-//catch (Exception $e) {
-//    echo $e->getMessage();
-//}
+
+try {
+    foreach (\WolfMVC\Censor::get("systemtables") as $key => $table) {
+        WolfMVC\Registry::set("systemtable_" . $key, $table);
+    }
+} catch (\WolfMVC\Configuration\Exception\Syntax $e) {
+    echo $e->getMessageType();
+    echo $e->getMessage();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
+try {
+    foreach (\WolfMVC\Censor::get("language") as $key => $lang) {
+        $lang = new WolfMVC\Lang($lang);
+        WolfMVC\Registry::set("language", $lang);
+        WolfMVC\Base::$_lang = WolfMVC\Registry::get("language");
+    }
+} catch (\WolfMVC\Configuration\Exception\Syntax $e) {
+    echo $e->getMessageType();
+    echo $e->getMessage();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+try {
+    foreach (\WolfMVC\Censor::get("module") as $key => $mod) {
+        if (is_file(APP_PATH . "/application/configuration/modules/" . $mod[1] . ".ini")) {
+            $array = WolfMVC\Registry::get("module_" . $mod[1]);
+            if (!is_array($array))
+                $array = array("conf" => APP_PATH . "/application/configuration/modules/" . $mod[1] . ".ini");
+            WolfMVC\Registry::set("module_" . $mod[1], $array);
+        }
+    }
+} catch (\WolfMVC\Configuration\Exception\Syntax $e) {
+    echo $e->getMessageType();
+    echo $e->getMessage();
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
 //try {
 //    $cache = new WolfMVC\Cache();
 //    WolfMVC\Registry::set("cache", $cache->initialize());
@@ -91,26 +98,64 @@ catch (Exception $e) {
 //    echo $e->getMessage();
 //}
 //
-//try {
-//
-//    $session = new WolfMVC\Session();
-//    WolfMVC\Registry::set("session", $session->initialize());
-//}
-//catch (\Exception $e) {
-//    echo $e->getMessage();
-//}
+try {
+
+    $session = new WolfMVC\Session();
+    WolfMVC\Registry::set("session", $session->initialize());
+} catch (\Exception $e) {
+    echo $e->getMessage();
+}
+$session = WolfMVC\Registry::get("session");
+
+WolfMVC\Registry::set("usertodisplay", $session->get("user"));
+//$session->eraseall();
+//echo "<pre>";
+//print_r($_SESSION);
+//echo "</pre>";
 //
 ////ok
 //
 try {
-    $router = new WolfMVC\Router(array(
-      "url" => isset($_GET["url"]) ? $_GET["url"] : "home/index",
-      "extension" => isset($_GET["extension"]) ? $_GET["extension"] : "html"
-    ));
+    $systemstatus = WolfMVC\Registry::get("systemstatus")->systemstatus;
+//    echo $systemstatus;
+    if (!(isset($systemstatus)) || is_null($systemstatus)) {
+        $router = new WolfMVC\Router(array(
+            "url" => "off/index",
+            "extension" => isset($_GET["extension"]) ? $_GET["extension"] : "html"
+        ));
+    }
+    switch (strtolower($systemstatus)) {
+        case "off":
+            $router = new WolfMVC\Router(array(
+                "url" => "off/index",
+                "extension" => "html"
+            ));
+            break;
+        case "maintenance":
+            $router = new WolfMVC\Router(array(
+                "url" => "maintenance/index",
+                "extension" => "html"
+            ));
+            break;
+        default :
+            $session->set("auth", true);
+            if ($session->get("auth")) {
+                $url = "home/index";
+                $router = new WolfMVC\Router(array(
+                    "url" => isset($_GET["url"]) ? $_GET["url"] : $url,
+                    "extension" => isset($_GET["extension"]) ? $_GET["extension"] : "html"
+                ));
+            } else {
+                $router = new WolfMVC\Router(array(
+                    "url" => "authenticate/index/",
+                    "extension" => isset($_GET["extension"]) ? $_GET["extension"] : "html"
+                ));
+            }
+    }
+   
     WolfMVC\Registry::set("router", $router);
     $router->dispatch();
-}
-catch (\Exception $e) {
+} catch (\Exception $e) {
     echo $e->getMessage();
     echo "<pre>";
     print_r($e->getTrace());
@@ -120,11 +165,11 @@ catch (\Exception $e) {
 //
 //
 //
-//unset($configuration);
-//unset($database);
-//unset($cache);
-//unset($session);
-//unset($router);
+unset($configuration);
+unset($database);
+unset($cache);
+unset($session);
+unset($router);
 //
 //WolfMVC\Registry::esponi();
 //WolfMVC\Censor::esponi();

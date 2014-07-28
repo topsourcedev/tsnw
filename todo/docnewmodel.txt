@@ -1,0 +1,6 @@
+documentare new model:
+* scelta del db principale e della tabella principale
+* inserimento di campi
+* modifica alias campo e unicità del nome
+* scelta del ruolo di un campo
+* caso "re"

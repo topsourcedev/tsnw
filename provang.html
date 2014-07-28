@@ -1,31 +1,694 @@
 <!DOCTYPE html>
-<html ng-app>
+<html>
     <head>
         <title>Simple app</title>
-        <script
-            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.js">
-        </script>
+        <script type="text/javascript" src="./public/js/jquery.js"></script>
+        <script type="text/javascript" src="./public/js/provang/aux.js"></script>
         <script>
-            function MyController($scope) {
-                var updateClock = function() {
-                    $scope.clock = new Date();
-                };
-                setInterval(function() {
-                    $scope.$apply(updateClock);
-                }, 1000);
-                updateClock();
+            function rdnstring(length) {
+                var chars = "abcdefghijklmnopqrstuvwxyz";
+                var out = "";
+                for (var i = 0; i < length; i++) {
+                    out += chars[Math.floor(chars.length * Math.random())];
+                }
+                return out;
+            }
+
+
+
+
+
+            var solvetableold = function(struct, model, hash, sql, flagmultiple, parent, mult, TABLESSYMBOL, FIELDSSYMBOL) {
+//                console.log("struct");
+//                console.log(struct);
+                if (typeof (struct) === "undefined" || struct === "") {
+//                    return new Array(new Array(), "");
+                    console.log("foglia");
+                    return;
+                }
+                console.log(struct);
+                if (typeof (struct.onetoone) !== "undefined") { // livello indicatori molteplicità
+                    var onetoone = struct.onetoone;
+                    if (onetoone !== "") {
+                        console.log("onetoone");
+                        var rec = solvetable(onetoone, model, hash, sql, flagmultiple, parent, "onetoone");
+                    }
+                    var onetomany = struct.onetomany;
+                    if (onetomany !== "") {
+                        console.log("onetomany");
+                        var rec = solvetable(onetomany, model, hash, sql, true, parent, "onetomany");
+                    }
+//                      outfields = outfields.concat(rec[0]);
+//                    outtables += rec[1];
+                    var manytoone = struct.manytoone;
+                    if (manytoone !== "") {
+                        console.log("manytoone");
+                        var rec = solvetable(manytoone, model, hash, sql, flagmultiple, parent, "manytoone");
+                    }
+                }
+                else {
+
+                    //se sono sulla maintable
+                    if (parent === "") {
+                        while (true) {
+                            var alias = rdnstring(2);
+                            if (typeof (hash[alias]) === "undefined") {
+                                hash[alias] = alias;
+                                break;
+                            }
+                        }
+                        var fields = model.tables[model.maintable].fields;
+                        if (typeof (fields) === "undefined")
+                            fields = new Array();
+                        else
+                            fields = fields.split("|");
+                        for (var i in fields) {
+                            sql.sql = sql.sql.replace("#FIELDS#", alias + "." + model.fields[fields[i]].fieldname + " as " + model.fields[fields[i]].alias + ", #FIELDS#");
+                        }
+                        sql.sql = sql.sql.replace("#TABLES#", model.tables[model.maintable].tablename + " " + alias + " #TABLES#");
+                        solvetable(struct[model.maintable], model, hash, sql, flagmultiple, alias, "");
+                        sql.sql = sql.sql.replace("#TABLES#", "");
+                        sql.sql = sql.sql.replace(", #FIELDS#", "");
+                    }
+                    //altrimenti
+                    else {
+                        for (var tab in struct) {
+                            while (true) {
+                                var alias = rdnstring(2);
+                                if (typeof (hash[alias]) === "undefined") {
+                                    hash[alias] = alias;
+                                    break;
+                                }
+                            }
+                            var tablename = model.tables[tab].tablename;
+                            var ff = model.tables[tab].fieldfrom;
+                            var ft = model.tables[tab].fieldto;
+                            var hi = model.tables[tab].hasid;
+                            var id = model.tables[tab].id;
+                            if (typeof (hi) === "undefined" || hi === false || hi === "false" || typeof (id) === "undefined" || id === "") {
+                                id = "";
+                            }
+
+                            var fields = model.tables[tab].fields;
+                            if (typeof (fields) === "undefined")
+                                fields = new Array();
+                            else
+                                fields = fields.split("|");
+                            console.log("tabella " + tab + ": " + tablename + " " + alias);
+                            console.log(fields);
+                            //con quale molteplicità e molteplicità pregressa entra
+                            switch (mult) {
+                                case "onetoone":
+                                    if (!flagmultiple) {
+                                        for (var i in fields) {
+                                            var fieldname = model.fields[fields[i]].fieldname;
+                                            var fieldalias = model.fields[fields[i]].alias;
+                                            if (fieldalias.search(" ") >= 0)
+                                                fieldalias = "'" + fieldalias + "'";
+                                            sql.sql = sql.sql.replace("#FIELDS#", alias + "." + fieldname + " as " + fieldalias + ", #FIELDS#");
+                                        }
+
+                                        sql.sql = sql.sql.replace("#TABLES#", "LEFT JOIN " + tablename + " " + alias + " ON (" + alias + "." + ft + " = " + parent + "." + ff + ")" + " #TABLES#");
+                                        solvetable(struct[tab], model, hash, sql, flagmultiple, alias, "");
+                                    }
+                                    break;
+                                case "manytoone":
+                                    if (!flagmultiple) {
+                                        for (var i in fields) {
+                                            var fieldname = model.fields[fields[i]].fieldname;
+                                            var fieldalias = model.fields[fields[i]].alias;
+                                            if (fieldalias.search(" ") >= 0)
+                                                fieldalias = "'" + fieldalias + "'";
+                                            sql.sql = sql.sql.replace("#FIELDS#", alias + "." + fieldname + " as " + fieldalias + ", #FIELDS#");
+                                        }
+                                        sql.sql = sql.sql.replace("#TABLES#", "LEFT JOIN " + tablename + " " + alias + " ON (" + alias + "." + ft + " = " + parent + "." + ff + ")" + " #TABLES#");
+                                        solvetable(struct[tab], model, hash, sql, flagmultiple, alias, "");
+                                    }
+                                    break;
+                                case "onetomany":
+                                    solvetable(struct[tab], model, hash, sql, true, alias, "");
+                                    var subquery = "(SELECT ";
+                                    for (var i in fields) {
+
+                                        var fieldname = model.fields[fields[i]].fieldname;
+                                        var fieldalias = model.fields[fields[i]].alias;
+                                        if (fieldalias.search(" ") >= 0)
+                                            fieldalias = "'" + fieldalias + "'";
+                                        if (fieldname == id)
+                                            continue;
+                                        if (id === "") {
+                                            sql.sql = sql.sql.replace("#FIELDS#", "CONCAT('{',GROUP_CONCAT(" + alias + "." + fieldname + "),'}') as " + fieldalias + ", #FIELDS#");
+                                        }
+                                        else {
+                                            sql.sql = sql.sql.replace("#FIELDS#", "CONCAT('{',GROUP_CONCAT(CONCAT(" + alias + "." + id + ",':', " + alias + "." + fieldname + ")),'}') as " + fieldalias + ", #FIELDS#");
+                                        }
+
+                                        subquery += model.fields[fields[i]].fieldname + ", ";
+                                    }
+                                    subquery += ft + ", ";
+                                    subquery += "FROM " + tablename + " GROUP BY " + ft + ") ";
+                                    subquery = subquery.replace(", FROM", " FROM");
+                                    sql.sql = sql.sql.replace("#TABLES#", "LEFT JOIN " + subquery + alias + " ON (" + alias + "." + ft + " = " + parent + "." + ff + ")" + " #TABLES#");
+
+                                    break;
+                            }
+                            console.log("fine tabella " + tab);
+                        }
+                    }
+                }
+                return;
+                if (parent === "") {
+                    sql.sql = sql.sql.replace("#TABLES#", model.tables[model.maintable].tablename + " " + alias + " #TABLES#");
+                }
+                else {
+
+                }
+                for (var tab in struct) {
+                    var tablename = model.tables[tab].tablename;
+                    var ff = model.tables[tab].fieldfrom;
+                    var ft = model.tables[tab].fieldto;
+                    console.log("tabella " + tab + ": " + tablename + " " + alias);
+                    switch (mult) {
+                        case "onetoone":
+                            if (!flagmultiple) {
+                                sql.sql = sql.sql.replace("#TABLES#", "LEFT JOIN " + tablename + " " + alias + " ON (" + alias + "." + ft + " = " + parent + "." + ff + ")" + " #TABLES#")
+                            }
+                            break;
+                        case "manytoone":
+                            break;
+                        case "onetomany":
+                            break;
+                    }
+                }
+            }
+
+            var makeselect = function(model) {
+//                console.log(model);
+                if (typeof (model.select) === "undefined") {
+                    model.select = "SELECT #FIELDS# FROM #TABLES#";
+                }
+                var maintable = model.maintable;
+                var maintable_indb = model.tables[maintable];
+                var struct = model.structure;
+                var solve = solvetable(model, {}, new Array(), new Array("structure"), false);
+
+//                var solve = solvetable(model.structure, model, {}, sql, false, "", "onetoone");
+                console.log(model.structure);
+                console.log(model);
+// (struct, model, hash, sql, flagmultiple, parent, mult)
+//                console.log(solve);
+//                sql = sql.replace("#FIELDS#", "<br>" + solve[0].join(", ") + "<br>");
+//                sql = sql.replace("#TABLES#", "<br>" + solve[1] + "<br>");
+//                console.log(sql);
+                return model.select;
+            };
+            function output() {
+                if ($("#txtobject").length !== 1) {
+                    txtareatodiv();
+                }
+                var model = $("#txtobject").html().replace(/<br>/gi, "\n").replace(/&nbsp;/g, " ");
+//                console.log(model);
+                model = JSON.parse(model);
+                var sql = makeselect(model);
+//                console.log(sql.match(/(\s{1})(LEFT JOIN|JOIN)/g));
+//                sql = sql.replace(/(\s{1})(LEFT JOIN|JOIN)/g, "<br>$2");
+                $("#select").html(sql);
+            }
+
+
+
+
+            $(document).delegate('#txtobject2', 'keydown', function(e) {
+                var keyCode = e.keyCode || e.which;
+                if (keyCode == 9) {
+                    e.preventDefault();
+                    var start = $(this).get(0).selectionStart;
+                    var end = $(this).get(0).selectionEnd;
+                    // set textarea value to: text before caret + tab + text after caret
+                    $(this).html($(this).val().substring(0, start)
+                            + "\t"
+                            + $(this).val().substring(end));
+                    // put caret at right position again
+                    $(this).get(0).selectionStart =
+                            $(this).get(0).selectionEnd = start + 1;
+                }
+            });
+            $(document).delegate('#txtobject', 'keyup', function(e) {
+                var keyCode = e.keyCode || e.which;
+            });
+            function prettyformattxtarea() {
+                var txt = $("#txtobject2").val();
+                txt = txt.replace(/\s{2}/g, "")
+                var newtxt = "";
+                var indent = 0;
+                var j = 0;
+                for (var i = 0; i < txt.length; i++) {
+
+                    if (txt[i] === "{") {
+                        newtxt += "\n";
+                        indent++;
+                        for (var j = 0; j < indent; j++)
+                            newtxt += "\t";
+                        newtxt += "{\n";
+                        for (var j = 0; j < indent; j++)
+                            newtxt += "\t";
+                    }
+                    else if (txt[i] === "}") {
+                        if (txt[i + 1] === ",") {
+                            indent--;
+                            newtxt += "\n";
+                            for (var j = 0; j < indent; j++)
+                                newtxt += "\t";
+                            newtxt += "},\n";
+                            for (var j = 0; j < indent; j++)
+                                newtxt += "\t";
+                            i++;
+                        }
+                        else {
+                            indent--;
+                            newtxt += "\n";
+                            for (var j = 0; j < indent; j++)
+                                newtxt += "\t";
+                            newtxt += "}\n";
+                            for (var j = 0; j < indent; j++)
+                                newtxt += "\t";
+                        }
+
+                    }
+                    else if (txt[i] === "," && txt[i - 1] === "\"") {
+                        newtxt += ",\n";
+                        for (var j = 0; j < indent; j++)
+                            newtxt += "\t";
+                    }
+                    else {
+                        newtxt += txt[i];
+                    }
+                }
+                $("#txtobject2").val(newtxt);
+            }
+
+            function prettyformatdiv() {
+                var txt = $("#txtobject").html();
+                txt = txt.replace(/\s{2}/g, "")
+                var newtxt = "";
+                var indent = 0;
+                var j = 0;
+                for (var i = 0; i < txt.length; i++) {
+
+                    if (txt[i] === "{") {
+                        newtxt += "<br>";
+                        indent++;
+                        for (var j = 0; j < indent; j++)
+                            newtxt += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                        newtxt += "{<br>";
+                        for (var j = 0; j < indent; j++)
+                            newtxt += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                    }
+                    else if (txt[i] === "}") {
+                        if (txt[i + 1] === ",") {
+                            indent--;
+                            newtxt += "<br>";
+                            for (var j = 0; j < indent; j++)
+                                newtxt += "&nbsp;&nbsp;";
+                            newtxt += "},<br>";
+                            for (var j = 0; j < indent; j++)
+                                newtxt += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                            i++;
+                        }
+                        else {
+                            indent--;
+                            newtxt += "}<br>";
+                            for (var j = 0; j < indent; j++)
+                                newtxt += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                        }
+                    }
+                    else if (txt[i] === "," && txt[i - 1] === "\"") {
+                        newtxt += ",<br>";
+                        for (var j = 0; j < indent; j++)
+                            newtxt += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                    }
+                    else {
+                        newtxt += txt[i];
+                    }
+                }
+                $("#txtobject").html(newtxt);
+            }
+
+            function divtotxtarea() {
+                var cont = $("#txtobject").html();
+                cont = cont.replace(/<br>/gi, "\n").replace(/&nbsp;/g, " ");
+                $("<textarea>")
+                        .attr({
+                            id: "txtobject2"
+                        })
+                        .css({
+                            width: "99%",
+                            height: "99%"
+                        })
+                        .val(cont)
+                        .replaceAll($("#txtobject"));
+                prettyformattxtarea();
             }
             ;
-        </script>
+            function txtareatodiv() {
+                var cont = $("#txtobject2").val();
+                $("<div>")
+                        .attr({
+                            id: "txtobject"
+                        })
+                        .css({
+                            width: "99%",
+                            height: "99%"
+                        })
+                        .html(cont)
+                        .replaceAll($("#txtobject2"));
+                prettyformatdiv();
+            }
+            ;
+            $(document).delegate('#txtobject', "dblclick", function() {
+                divtotxtarea();
+            });
+            $(document).delegate('#txtobject2', "dblclick", function() {
+                txtareatodiv();
+            });</script>
     </head>
     <body>
-        <input ng-model="name" type="text" placeholder="Your name">
-        <h1>Hello {{ name}}</h1>
-        <input ng-model="person.name" type="text" placeholder="Blabla">
-        <h1>Hello {{ person.name}}</h1>
-       
-        <div ng-controller="MyController">
-            <h5>{{clock}}</h5>
+        <div style="text-align: center; position: absolute; width: 100%; height: 50px; top:0px; left: 0px; padding: 10px;" id="divcommand">
+            <button onclick="output();">OUTPUT</button>
         </div>
+        <div style="position: absolute; width: 45%; height: 100%; top:50px; left: 0px; padding: 10px;" id="divobject">
+            <div id="txtobject" style="width: 99%; height: 99%;">
+
+{
+    "maintable": "table_0",
+    "tables":
+            {
+                "table_0":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "external_collections",
+                            "hasid": "true",
+                            "id": "accountid",
+                            "tablefrom": "",
+                            "fields": "field_0|field_1|field_6|field_7"
+                        },
+                "table_3":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "vtiger_account",
+                            "hasid": "true",
+                            "id": "accountid",
+                            "tablefrom": "table_0",
+                            "fieldfrom": "accountid",
+                            "fieldto": "accountid",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "*",
+                            "partialmatching": true,
+                            "genericvalueformissingmatch": "ND",
+                            "fields": "field_2|field_3|field_5"
+                        },
+                "table_5":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "vtiger_accountscf",
+                            "hasid": "true",
+                            "id": "accountid",
+                            "tablefrom": "table_3",
+                            "fieldfrom": "accountid",
+                            "fieldto": "accountid",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "!",
+                            "fields": "field_4"
+                        },
+                "table_7":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "external_banks",
+                            "hasid": "true",
+                            "id": "bankid",
+                            "tablefrom": "table_0",
+                            "fieldfrom": "bankid",
+                            "fieldto": "bankid",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "*",
+                            "partialmatching": false
+                        },
+                "table_10":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "external_collections_state",
+                            "hasid": "true",
+                            "id": "bankid",
+                            "tablefrom": "table_0",
+                            "fieldfrom": "state",
+                            "fieldto": "state",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "*",
+                            "partialmatching": true,
+                            "genericvalueformissingmatch": "ND"
+                        },
+                "table_11":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "external_collections_so",
+                            "hasid": "true",
+                            "id": "id",
+                            "tablefrom": "table_0",
+                            "fieldfrom": "id",
+                            "fieldto": "idcollection",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "+",
+                            "partialmatching": true,
+                            "genericvalueformissingmatch": "ND",
+                            "listing": true,
+                            "sepforlisting": "|",
+                            "fields": "field_10"
+                        },
+                "table_12":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "vtiger_salesorder",
+                            "hasid": "true",
+                            "id": "salesorderid",
+                            "tablefrom": "table_11",
+                            "fieldfrom": "idso",
+                            "fieldto": "salesorderid",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "*",
+                            "partialmatching": true,
+                            "genericvalueformissingmatch": "ND",
+                            "fields": "field_11"
+                        },
+                "table_13":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "vtiger_invoice",
+                            "hasid": "true",
+                            "id": "invoiceid",
+                            "tablefrom": "table_12",
+                            "fieldfrom": "salesorderid",
+                            "fieldto": "salesorderid",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "*",
+                            "partialmatching": true,
+                            "genericvalueformissingmatch": "ND",
+                            "fields": "field_12"
+                        },
+                "table_14":
+                        {
+                            "dbname": "vtiger",
+                            "tablename": "vtiger_invoicescf",
+                            "hasid": "true",
+                            "id": "invoiceid",
+                            "tablefrom": "table_12",
+                            "fieldfrom": "salesorderid",
+                            "fieldto": "salesorderid",
+                            "linkoperation": "#from# = #to#",
+                            "linkmult": "*",
+                            "partialmatching": true,
+                            "genericvalueformissingmatch": "ND",
+                            "fields": "field_13"
+                        }
+            },
+    "structure":
+            {
+                "table_0":
+                        {
+                            "onetoone": "",
+                            "manytoone":
+                                    {
+                                        "table_3":
+                                                {
+                                                    "onetoone":
+                                                            {
+                                                                "table_5":
+                                                                        {
+                                                                            "onetoone": "",
+                                                                            "manytoone": "",
+                                                                            "onetomany": ""
+                                                                        }
+
+                                                            },
+                                                    "manytoone": "",
+                                                    "onetomany": ""
+                                                },
+                                        "table_7":
+                                                {
+                                                    "onetoone": "",
+                                                    "manytoone": "",
+                                                    "onetomany": ""
+                                                },
+                                        "table_10":
+                                                {
+                                                    "onetoone": "",
+                                                    "manytoone": "",
+                                                    "onetomany": ""
+                                                }
+
+                                    },
+                            "onetomany":
+                                    {
+                                        "table_11":
+                                                {
+                                                    "onetoone": "",
+                                                    "manytoone":
+                                                            {
+                                                                "table_12":
+                                                                        {
+                                                                            "onetoone": "",
+                                                                            "manytoone": "",
+                                                                            "onetomany":
+                                                                                    {
+                                                                                        "table_13":
+                                                                                                {
+                                                                                                    "onetoone": "",
+                                                                                                    "manytoone": "",
+                                                                                                    "onetomany": ""
+                                                                                                }
+
+                                                                                    }
+
+                                                                        }
+
+                                                            },
+                                                    "onetomany": ""
+                                                }
+
+                                    }
+
+                        }
+
+            },
+    "fields":
+            {
+                "field_0":
+                        {
+                            "fieldname": "id",
+                            "alias": "collectionid",
+                            "table": "table_0",
+                            "role": "ID"
+                        },
+                "field_1":
+                        {
+                            "fieldname": "amount",
+                            "alias": "Ammontare",
+                            "table": "table_0",
+                            "role": "PR"
+                        },
+                "field_2":
+                        {
+                            "fieldname": "accountid",
+                            "alias": "accountid",
+                            "table": "table_3",
+                            "role": "PR"
+                        },
+                "field_3":
+                        {
+                            "fieldname": "accountname",
+                            "alias": "nome cliente",
+                            "table": "table_3",
+                            "role": "PR"
+                        },
+                "field_4":
+                        {
+                            "fieldname": "cf_643",
+                            "alias": "vend",
+                            "table": "table_5",
+                            "role": "AT"
+                        },
+                "field_5":
+                        {
+                            "fieldname": "account_no",
+                            "alias": "account_no",
+                            "table": "table_3",
+                            "role": "AT"
+                        },
+                "field_6":
+                        {
+                            "fieldname": "ref",
+                            "alias": "riferimento",
+                            "table": "table_0",
+                            "role": "PR"
+                        },
+                "field_7":
+                        {
+                            "fieldname": "type",
+                            "alias": "Tipo",
+                            "table": "table_0",
+                            "role": "AT"
+                        },
+                "field_8":
+                        {
+                            "fieldname": "potentialid",
+                            "alias": "potentialid",
+                            "table": "table_0",
+                            "role": "AT"
+                        },
+                "field_9":
+                        {
+                            "fieldname": "type",
+                            "alias": "Tipo",
+                            "table": "table_0",
+                            "role": "AT"
+                        },
+                "field_10":
+                        {
+                            "fieldname": "amount",
+                            "alias": "Ammontare SO",
+                            "table": "table_11",
+                            "role": "LI"
+                        },
+                "field_11":
+                        {
+                            "fieldname": "subject",
+                            "alias": "Oggetto SO",
+                            "table": "table_12",
+                            "role": "LI"
+                        },
+                "field_12": {
+                    "fieldname": "subject",
+                    "alias": "Oggetto INV",
+                    "table": "table_13",
+                    "role": "LI"
+                },
+                "field_13": {
+                    "fieldname": "cf123",
+                    "alias": "cfcf",
+                    "table": "table_14",
+                    "role": "LI"
+                }
+            }
+
+
+}
+	
+            </div>
+        </div>
+        <div style="overflow: scroll; position: absolute; width: 45%; height: 100%; top:50px; left: 55%; padding: 10px;" id="divout">
+            <p>SELECT</p>
+            <p id="select"></p>
+        </div>
+
+
     </body>
 </html>

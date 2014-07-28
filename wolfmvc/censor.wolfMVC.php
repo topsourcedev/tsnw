@@ -16,51 +16,62 @@ namespace WolfMVC {
          * 
          */
         private static $_objects = array(
-          "database" => array(),
-          "modules" => array(),
-          "language" => array()
+            "database" => array(),
+            "modules" => array(),
+            "language" => array(),
+            "systemtables" => array(),
         );
 
         public function __construct() {
             $database = array();
             $modules = array();
-            
+
             $main_config_path = APP_PATH . "/application/configuration/main_config.php";
 //            echo "<br>Search for main config = " . $main_config_path . "<br>";
             if (is_file($main_config_path)) {
-                try{
+                try {
                     require ($main_config_path);
-                    foreach ($database as $key => $db){
-                        if ((count($db) == 4) && (is_string($db[0])) && (is_string($db[1])) && (is_string($db[2])) && (is_string($db[3])))
-                        {
+                    foreach ($database as $key => $db) {
+                        if ((count($db) == 4) && (is_string($db[0])) && (is_string($db[1])) && (is_string($db[2])) && (is_string($db[3]))) {
                             self::$_objects['database'][$key] = $db;
-                            if (!(constant("\WolfMVC\Censorflags::".$db[3]))){
+                            if (!(constant("\WolfMVC\Censorflags::" . $db[3]))) {
                                 self::$_objects['init_database'][] = $key;
                             }
                         }
                     }
                     self::$_objects['database'] = $database;
-                    foreach ($language as $key => $lang){
-                        if ((count($lang) == 2) && (is_string($lang[0])) && (is_string($lang[1])))
-                        {
+
+                    foreach ($systemtables as $key => $table) {
+                        if ((count($table) == 3) && (is_string($table[0])) && (is_string($table[1])) && (is_string($table[2]))) {
+                            self::$_objects['systemtables'][$table[0]] = array("table" => $table[2], "db" => $table[1]);
+                        }
+                    }
+
+
+                    foreach ($language as $key => $lang) {
+                        if ((count($lang) == 2) && (is_string($lang[0])) && (is_string($lang[1]))) {
                             self::$_objects['language'][$key] = $lang;
                         }
                     }
                     self::$_objects['language'] = $language;
-                    
-                    foreach ($module as $key => $mod){
-                        if ((count($mod) == 2) && (is_string($mod[0])) && (is_string($mod[1])))
-                        {
+
+                    foreach ($module as $key => $mod) {
+                        if ((count($mod) == 2) && (is_string($mod[0])) && (is_string($mod[1]))) {
                             self::$_objects['module'][$key] = $mod;
                         }
                     }
-                    self::$_objects['language'] = $language;
-                }
-                catch(Exception $e){
+                    self::$_objects['module'] = $module;
+                    unset($mod);
+                    foreach ($model as $key => $mod) {
+                        if ((count($mod) == 2) && (is_string($mod[0])) && (is_string($mod[1]))) {
+                            self::$_objects['model'][$key] = $mod;
+                        }
+                    }
+                    self::$_objects['model'] = $model;
+                } catch (Exception $e) {
                     die('Error in main configuration file.');
                 }
-            }
-            else
+            } else
                 echo "Il file non esiste<br>";
         }
 

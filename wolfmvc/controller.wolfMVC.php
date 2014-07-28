@@ -75,16 +75,29 @@ namespace WolfMVC {
             return new Exception\Argument("Invalid argument");
         }
 
-        public function nameofthiscontroller(){
+        public function nameofthiscontroller() {
             $router = \WolfMVC\Registry::get("router");
-            return $router -> getController();
+            return $router->getController();
         }
-        
+
         public function index() {
             echo Registry::get("language")->sh("WolfMVC.Controller.genericindexmethod");
         }
 
         public function render() {
+            $layoutenvvars = array(
+                "stdpagetitle" => "WolfMVC",
+                "user" => ""
+            );
+            $envvars = \WolfMVC\Registry::get("layoutenvvars");
+            if (!(is_null($envvars))) {
+                foreach ($layoutenvvars as $key => $var) {
+                    if (isset($envvars->$key) && !(is_null($envvars->$key))) {
+                        $layoutenvvars[$key] = $envvars->$key;
+                    }
+                }
+            }
+            
             if (method_exists(get_class($this), "script_including")) {
                 $this->script_including();
             }
@@ -102,21 +115,25 @@ namespace WolfMVC {
                 if ($doLayout) {
                     $view = $this->getLayoutView();
                     $view->set("system_js_including", $this->_system_js_including);
+                    $view->set("stdpagetitle", $layoutenvvars["stdpagetitle"]);
+                    $usertodisplay = \WolfMVC\Registry::get("usertodisplay");
+                    if ((isset($usertodisplay)) && (!(is_null($usertodisplay)))){
+                        $layoutenvvars["user"] = $usertodisplay;
+                    }
+                    $view->set("user", $layoutenvvars["user"]);
                     $view->set("template", $results);
                     $results = $view->render();
 
                     header("Content-type: {$defaultContentType}");
                     echo $results;
-                }
-                else if ($doAction) {
+                } else if ($doAction) {
                     header("Content-type: {$defaultContentType}");
                     echo $results;
 
                     $this->setWillRenderLayoutView(false);
                     $this->setWillRenderActionView(false);
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 throw new View\Exception\Renderer("Invalid layout/template syntax");
             }
         }
@@ -125,9 +142,16 @@ namespace WolfMVC {
             $this->render();
         }
 
-        public function ws___describe() {
+        public function disablerender() {
             $this->setWillRenderActionView(false);
             $this->setWillRenderLayoutView(false);
+        }
+
+        /**
+         * @before disablerender
+         */
+        public function ws___describe() {
+
 
 //            $view = $this->getActionView();
             header('Content-type: application/json');
@@ -148,8 +172,7 @@ namespace WolfMVC {
                 if (preg_match(",^(\S+)\s*;\s*(?:q|level)=([0-9\.]+),i", $term, $M)) {
                     $o->type = $M[1];
                     $o->q = (double) $M[2];
-                }
-                else {
+                } else {
                     $o->type = $term;
                     $o->q = 1;
                 }
@@ -160,11 +183,9 @@ namespace WolfMVC {
                 $diff = $b->q - $a->q;
                 if ($diff > 0) {
                     $diff = 1;
-                }
-                else if ($diff < 0) {
+                } else if ($diff < 0) {
                     $diff = -1;
-                }
-                else {
+                } else {
                     /* tie-breaker: first listed item wins */
                     $diff = $a->pos - $b->pos;
                 }
@@ -179,14 +200,14 @@ namespace WolfMVC {
 
         public function __construct($options = array()) {
             parent::__construct($options);
-
+            
             if ($this->getWillRenderLayoutView()) {
                 $defaultPath = $this->getDefaultPath();
                 $defaultLayout = $this->getDefaultLayout();
                 $defaultExtension = $this->getDefaultExtension();
 
                 $view = new View(array(
-                  "file" => APP_PATH . "/{$defaultPath}/{$defaultLayout}.{$defaultExtension}"
+                    "file" => APP_PATH . "/{$defaultPath}/{$defaultLayout}.{$defaultExtension}"
                 ));
 
                 $this->setLayoutView($view);
@@ -198,11 +219,10 @@ namespace WolfMVC {
                 $action = $router->getAction();
 
                 $view = new View(array(
-                  "file" => APP_PATH . "/{$defaultPath}/{$controller}/{$action}.{$defaultExtension}"
+                    "file" => APP_PATH . "/{$defaultPath}/{$controller}/{$action}.{$defaultExtension}"
                 ));
-
                 $this->setActionView($view);
-            }
+                }
         }
 
     }

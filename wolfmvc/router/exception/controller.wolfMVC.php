@@ -6,6 +6,5 @@ namespace WolfMVC\Router\Exception
     
     class Controller extends Router\Exception
     {
-        
     }
 }
