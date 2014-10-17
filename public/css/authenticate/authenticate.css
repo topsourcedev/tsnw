@@ -12,32 +12,38 @@ body, html {
     position: fixed;
     width: 100%;
     height: 100%;
-    background: #d2dbd9;
+    /*background: #d2dbd9;*/
 }
 
 
 .authenticate_div {
     position: relative;
-    left: 30%;
+    left: 33%;
     top: 20%;
-    width: 40%;
+    width: 34%;
     /*height: 30%;*/
     margin: 5px;
     padding: 10px;
-    box-shadow: 5px 5px 10px;
-    border: 1px solid black;
-    border-radius: 15px;
-    text-align: center;
-    vertical-align: middle;
-    background: #7ca79f
+    /*border: 1px solid lightgrey;*/
+    border-radius: 5px;
+    height: 35%;
+    text-align: center; 
 }
+
+#formdiv {
+    float: left;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: right;
+}
+
 
 .authenticate_button {
     border-radius: 5px;
 }
 
 .authenticate_label {
-    font: italic 16px sans-serif;
+    /*font: italic 16px sans-serif;*/
     
 }
 
@@ -46,7 +52,7 @@ body, html {
     color: red;
 }
 
-.authenticate_field {
+/*.authenticate_field {
     position: relative;
     top: -3px;
     left: 5px;
@@ -55,4 +61,4 @@ body, html {
     height: 25px;
     padding: 5px;
     margin: 5px;
-}
+}*/

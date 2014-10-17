@@ -87,6 +87,19 @@ namespace WolfMVC\Template\Pagecomponent {
         protected $_render = true;
         protected $_scroll = array("w" => false, "h" => false);
 
+        /**
+         * @readwrite
+         * @var string
+         */
+        protected $_onClick = "";
+        
+        protected $_compElements = array(
+            "gravestone" => array(
+                "selector" => ".gravestone",
+                "events" => array("dblClick")
+            )
+            );
+
         protected function initialize() {
             foreach ($this->_showinglabels as $key => $label) { //controllo che i campi da mostrare siano tutti validi
                 if (array_search($label, $this->_labels) === FALSE) {
@@ -157,13 +170,22 @@ namespace WolfMVC\Template\Pagecomponent {
             if ($this->_render) {
 
                 $numpages = ceil($this->_datalength / $this->_stonesinapage);
-                $gravestone = "<div class=\"gravestone\" style=\"border: 1px solid black; width: " . $this->_gravestoneSize[1] . "px; height: " . $this->_gravestoneSize[0] . "px; top: {{TOP}}px; left: {{LEFT}}px;\">{{CONTENT}}</div>";
+                $gravestone = "<div id=\"gravestone_{{id}}\" class=\"gravestone\" style=\"border: 1px solid black; width: " . $this->_gravestoneSize[1] . "px; height: " . $this->_gravestoneSize[0] . "px; top: {{TOP}}px; left: {{LEFT}}px;\">{{CONTENT}}</div>";
                 $nchar = floor(2 * ($this->_gravestoneSize[1] / ($this->_fontsize[1])) - 3);
                 for ($pagenum = 0; $pagenum < $numpages; $pagenum ++) {
+
                     echo "<div class=\"gravestonesMenuPage\" style=\"border: 2px solid black; width: " . $this->_sizeInfo["w"] . "px; height: " . $this->_sizeInfo["h"] . "px;" . $scroll . "\">";
                     echo "<div class=\"gravestonesMenuPageNumber\" style=\"position: absolute; right: 20px; bottom: 20px;\">" . ($pagenum + 1) . "/" . $numpages . "</div>";
                     for ($lapide = 0; $lapide < $this->_stonesinapage; $lapide ++) {
                         $rownumber = ($pagenum + 1) * ($lapide + 1) - 1;
+
+                        $id = $this->_parameters["Pk project"];
+                        if (isset($this->_data[$rownumber])) {
+                            foreach ($this->_labels as $labelk => $label) {
+                                $id = str_replace("[[[" . $label . "]]]", $this->_data[$rownumber][$label], $id);
+                            }
+                        }
+
                         $numinrow = $lapide % $this->_stonesinarow;
                         $numincol = floor($lapide / $this->_stonesinarow);
                         $left = floor($this->_gravestoneSize[3]) * ($numinrow + 1) + floor($this->_gravestoneSize[1]) * ($numinrow);
@@ -171,6 +193,7 @@ namespace WolfMVC\Template\Pagecomponent {
                         $content = "";
                         $titolo = "Title";
                         if (!isset($this->_data[$rownumber])) {
+                            continue;
                             $content = "";
                         } else {
                             foreach ($this->_showinglabels as $label) {
@@ -184,7 +207,7 @@ namespace WolfMVC\Template\Pagecomponent {
                                 $titolo = "";
                             }
                         }
-                        echo str_replace(array("{{TOP}}", "{{LEFT}}", "{{CONTENT}}"), array($top, $left, $content), $gravestone); //$numinrow." ".$left." ".$top
+                        echo str_replace(array("{{TOP}}", "{{LEFT}}", "{{CONTENT}}", "{{id}}"), array($top, $left, $content, $id), $gravestone); //$numinrow." ".$left." ".$top
                     }
                     echo "</div>";
                 }
@@ -192,6 +215,9 @@ namespace WolfMVC\Template\Pagecomponent {
                 echo "IMPOSSIBILE RENDERIZZARE";
             }
             echo "</div>";
+            if ($this->_onClick !== "") {
+                echo "<script>\nvar clickUrl = '" . $this->_onClick . "'\n</script>";
+            }
             $out = ob_get_contents();
             ob_end_clean();
             return parent::render($out);

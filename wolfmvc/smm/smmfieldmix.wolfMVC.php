@@ -79,6 +79,7 @@ namespace WolfMVC\Smm {
                 $this->_fieldOp->setArgument($key, $comp);
             }
             $this->_name = $this->_fieldOp->expose();
+            $this->_collapse = $this->_fieldOp->getCollapse();
             $this->_defaultmode = "name";
             array_push($this->_modes,"name");
         }
