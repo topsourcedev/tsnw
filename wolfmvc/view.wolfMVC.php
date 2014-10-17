@@ -96,7 +96,7 @@ namespace WolfMVC
         
         public function erase($key)
         {
-            unset($this->data[$key]);
+            unset($this->_data[$key]);
             return $this;
         }
     }    

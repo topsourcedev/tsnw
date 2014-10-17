@@ -21,11 +21,11 @@ namespace WolfMVC {
          * @var array 
          */
         private static $_paths = array(
-          "/application/libraries",
-          "/application/controllers",
-          "/application/models",
-          "/application",
-          ""
+            "/application/libraries",
+            "/application/controllers",
+            "/application/models",
+            "/application",
+            ""
         );
 
         /**
@@ -37,17 +37,20 @@ namespace WolfMVC {
          * @throws Exception
          */
         public static function initialize() {
-            if (!defined("APP_PATH")) {
+            if (!defined("APP_PATH"))
+            {
                 throw new Exception("APP_PATH not defined");
             }
 
 
 
-            if (get_magic_quotes_gpc()) {
+            if (get_magic_quotes_gpc())
+            {
                 $globals = array("_POST", "_GET", "_COOKIE", "_REQUEST", "_SESSION");
 
                 foreach ($globals as $global) {
-                    if (isset($GLOBALS[$global])) {
+                    if (isset($GLOBALS[$global]))
+                    {
                         $GLOBALS[$global] = Utils::_strips($GLOBALS[$global]);
                     }
                 }
@@ -61,7 +64,26 @@ namespace WolfMVC {
 
             $paths[] = get_include_path();
             set_include_path(join(PATH_SEPARATOR, $paths));
+            spl_autoload_register(__CLASS__ . "::google_api_php_client_autoload");
             spl_autoload_register(__CLASS__ . "::_autoload");
+        }
+
+        protected static function google_api_php_client_autoload($className) {
+            $classPath = explode('_', $className);
+            if ($classPath[0] != 'Google')
+            {
+                return;
+            }
+            if (count($classPath) > 3)
+            {
+                // Maximum class file path depth in this project is 3.
+                $classPath = array_slice($classPath, 0, 3);
+            }
+            $filePath = APP_PATH . '/application/libraries/googleapi/src/' . implode('/', $classPath) . '.php';
+            if (file_exists($filePath))
+            {
+                require_once($filePath);
+            }
         }
 
         /**
@@ -84,19 +106,23 @@ namespace WolfMVC {
                 echo "<br><strong>Richiesto file : " . $file . "</strong><br />";
             foreach ($percorsi as $percorso) {
                 $tentativo = $percorso . DIRECTORY_SEPARATOR . $file;
-                if ($debug) {
+                if ($debug)
+                {
 //                    echo "Lo cerco in " . $percorso . DIRECTORY_SEPARATOR . "<br>";
-                    if (is_dir($percorso . DIRECTORY_SEPARATOR)) {
+                    if (is_dir($percorso . DIRECTORY_SEPARATOR))
+                    {
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $percorso . DIRECTORY_SEPARATOR . " &eacute; una directory<br>";
 //                        echo "<pre>";
 //                        print_r(scandir($percorso . DIRECTORY_SEPARATOR));
 //                        echo "</pre>";
                     }
-                    else {
+                    else
+                    {
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $percorso . DIRECTORY_SEPARATOR . " non &eacute; una directory<br>";
                     }
                 }
-                if (file_exists($tentativo)) {
+                if (file_exists($tentativo))
+                {
                     if ($debug)
                         echo $tentativo . "<strong> TROVATO!!!</strong><br><br>";
                     include($tentativo);
@@ -113,19 +139,23 @@ namespace WolfMVC {
                 echo "<br><strong>Richiesto file : " . $file . "</strong><br />";
             foreach ($percorsi as $percorso) {
                 $tentativo = $percorso . DIRECTORY_SEPARATOR . $file;
-                if ($debug) {
+                if ($debug)
+                {
                     echo "Lo cerco in " . $percorso . DIRECTORY_SEPARATOR . "<br>";
-                    if (is_dir($percorso . DIRECTORY_SEPARATOR)) {
+                    if (is_dir($percorso . DIRECTORY_SEPARATOR))
+                    {
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $percorso . DIRECTORY_SEPARATOR . " &eacute; una directory<br>";
 //                        echo "<pre>";
 //                        print_r(scandir($percorso . DIRECTORY_SEPARATOR));
 //                        echo "</pre>";
                     }
-                    else {
+                    else
+                    {
                         echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $percorso . DIRECTORY_SEPARATOR . " non &eacute; una directory<br>";
                     }
                 }
-                if (file_exists($tentativo)) {
+                if (file_exists($tentativo))
+                {
                     if ($debug)
                         echo $tentativo . "<strong> TROVATO!!!</strong><br><br>";
                     include($tentativo);

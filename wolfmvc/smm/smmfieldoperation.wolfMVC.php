@@ -47,6 +47,12 @@ namespace WolfMVC\Smm {
          * @var array
          */
         protected $_arguments = array();
+        
+        /**
+         * @readwrite
+         * @var boolean Vero per funzioni come Sum, Max, Group_concat che restituiscono una riga da molte
+         */
+        protected $_collapse = false;
 
         public function fromName($name) {
             $regOperations = (\WolfMVC\Registry::get("smm_regOperations"));
@@ -67,7 +73,8 @@ namespace WolfMVC\Smm {
                         "expression" => $row["expression"],
                         "argumentTypes" => $row["argumenttypes"],
                         "returnType" => $row["returntype"],
-                        "canBeNull" => $row["canbenull"]
+                        "canBeNull" => ($row["canbenull"]===0 || $row["canbenull"]==='0'),
+                        "collapse" => ($row["collapse"]===0 || $row["collapse"]==='0')
                     );
                 }
                 \WolfMVC\Registry::set("smm_regOperations", $regOperations);
@@ -78,6 +85,7 @@ namespace WolfMVC\Smm {
                 $this->_argumentTypes = $regOperations[$name]["argumentTypes"];
                 $this->_returnType = $regOperations[$name]["returnType"];
                 $this->_numberOfArguments = $regOperations[$name]["numberOfArguments"];
+                $this->_collapse = $regOperations[$name]["collapse"];
                 return $this;
             } else {
                 throw new \Exception("Operazione inesistente.", 0, NULL);

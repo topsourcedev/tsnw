@@ -152,7 +152,7 @@ namespace WolfMVC
                 }
             }
             
-            return $_properties;
+            return $_methods;
         }
         
         

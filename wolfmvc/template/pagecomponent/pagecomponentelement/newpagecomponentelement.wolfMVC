@@ -1,0 +1,46 @@
+<?php
+
+/*
+ * Questo software è stato creato da Alberto Brudaglio per TopSource S.r.l. Tutti i diritti sono riservati.
+ * This software has ben developed by Alberto Brudaglio for Topsource S.r.l. All rights reserved.
+ */
+
+namespace WolfMVC\Template\Pagecomponent\Pagecomponentelement {
+
+
+    class Gravestone extends \WolfMVC\Template\Pagecomponentelement {
+
+        /**
+         *
+         * @readwrite
+         */
+        protected $_datum;
+
+        /**
+         *
+         * 
+         */
+        protected $_parameters = array(
+            "labels" => array(),
+            "titlelabel" = ""
+            "size" => array()
+        );
+
+
+        public function render($html) {
+            return "<div class=\"gravestone\" style=\"border: 1px solid black; width: " . $this->_parameters["size"][0] . "px; height: " . $this->_parameters["size"][1] . "px; top: {{TOP}}px; left: {{LEFT}}px;\">{{CONTENT}}</div>";
+        }
+
+        public function js(){
+            ?>
+<script>
+function gravestone(){
+    
+}
+</script>
+<?php
+        }
+    }
+
+}
+?>

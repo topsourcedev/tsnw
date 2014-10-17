@@ -3,9 +3,9 @@
 namespace WolfMVC {
 
     use WolfMVC\Boatswain as Boatswain;
-use WolfMVC\ArrayMethods as ArrayMethods;
-use WolfMVC\StringMethods as StringMethods;
-use WolfMVC\Core\Exception as Exception;
+    use WolfMVC\ArrayMethods as ArrayMethods;
+    use WolfMVC\StringMethods as StringMethods;
+    use WolfMVC\Core\Exception as Exception;
 
     /**
      * Classe base che fa da parent a tutte le classi applicative del framework
@@ -157,6 +157,96 @@ use WolfMVC\Core\Exception as Exception;
             return new Exception\Argument("{$method} method not implemented");
         }
 
+        public function print_rec($obj, $level, $tabs = 0) {
+            $prefix = "";
+            for ($i = 0; $i < $tabs; $i++) {
+                $prefix .= "  ";
+            }
+            if ($level === 0) {
+                if (is_object($obj)) {
+                    echo $prefix . "[Object " . get_class($obj) . "]<br>";
+                    $props = get_object_vars($obj);
+                    foreach ($props as $key => $prop) {
+                        echo "  " . $prefix . $key . "<br>";
+                    }
+                } else if (is_array($obj)) {
+                    echo $prefix . "[Array]<br>";
+                    foreach ($obj as $key => $val) {
+                        echo "  " . $prefix . "[".$key . "] => ...<br>";
+                    }
+                } else {
+                    echo $prefix . $obj . "<br>";
+                }
+                return;
+            } else {
+                if (is_object($obj)) {
+                    echo $prefix . "[Object " . get_class($obj) . "]<br>";
+                    $props = get_object_vars($obj);
+                    foreach ($props as $key => $prop) {
+                        echo "  " . $prefix . $key . "<br>";
+                        $this->print_rec($obj->{$key}, $level - 1, $tabs + 2);
+                    }
+                } else if (is_array($obj)) {
+                    echo $prefix . "[Array]<br>";
+                    foreach ($obj as $key => $val) {
+                        echo "  " . $prefix . "[".$key . "] => <br>";
+                        $this->print_rec($val, $level - 1, $tabs + 2);
+                    }
+                } else {
+                    echo $prefix . $obj . "<br>";
+                }
+                return;
+            }
+        }
+
+        public function debug_describe($what, $level) {
+            echo "<br>-------------------------------------------------------------------------------------------------<br>";
+            if (is_string($what)) {
+                echo "DEBUG DESCRIBE: " . get_class($this) . "  " . $what . "<br>";
+                if (property_exists($this, $what)) {
+                    if ($level === "all") {
+                        
+                        echo "<pre>";
+                        print_r($this->{$what});
+                        echo "<pre>";
+                    } else if (is_int($level) && $level >= 0) {
+                        
+                        echo "<pre>";
+                        $this->print_rec($this->{$what},$level);
+                        echo "<pre>";
+                    }
+                } else {
+                    echo "<br>Attributo inesistente in questa classe<br>";
+                }
+            } else if (is_array($what)) {
+                
+                echo "DEBUG DESCRIBE: " . get_class($this) . "<br>";
+                foreach ($what as $key => $w) {
+                    if (property_exists($this, $w)) {
+                        if ($level === "all") {
+                            
+                            echo "<pre>";
+                            print_r($this->{$w});
+                            echo "<pre>";
+                        } else if (is_int($level) && $level >= 0) {
+                            echo "<pre>";
+                            $this->print_rec($this->{$w},$level);
+                            echo "<pre>________________________________________________________________________________________________<br><br>";
+                        }
+                    } else {
+                        echo "<br>" . $w . " Attributo inesistente in questa classe<br>";
+                    }
+                }
+            } else {
+                echo "DEBUG DESCRIBE: " . get_class($this) . "<br>";
+                echo "<pre>";
+                print_r($this);
+                echo "<pre>";
+            }
+            echo "<br>-------------------------------------------------------------------------------------------------<br>";
+        }
+
     }
 
 }
+    
