@@ -4,6 +4,18 @@
 {echo $marquee}
 <br>
 {/if}
+ Questo &eacute; il metodo index del sistema di Incassi.<br>
+ Da qui &eacute; possibile raggiungere quasi tutte le schermate della gestione degli incassi.<br>
+        Quando sar&agrave; attivata la modalit&agrave; layout questa pagina sar&agrave; molto pi&ugrave; bella.<br>";
+        <br> Le opzioni disponibili sono <br>
+        <ul><li>Inserimento nuovo incasso</li>
+        <li>Gestione incassi in transito</li>
+        <li>Amministrazione incassi</li>
+        <li>Gestione Banche</li></ul>
+        Le schermate che non sono raggiungibili da qui sono:
+        <ul><li>Modifica di un incasso</li>
+        <li>Modifica di una banca</li>
+        <li>Altre opzioni</li></ul>
 <form method="post" action="{echo $insert_path}">
     <button type="submit" name="insert">Inserisci nuovo incasso</button>
     {if isset($first_error)}

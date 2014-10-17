@@ -17,7 +17,8 @@
 $database = array();
 $language = array();
 $module = array();
-
+$model = array();
+$systemtables = array();
 
 /* * *******************
  *                     *
@@ -28,26 +29,35 @@ $module = array();
 // per aggiungere un db aggiungere una riga come la seguente:
 //$database [] = ["name","config_file","format", "flag"];
 //name è il nome interno del db 
-//config file è il nome senza estensione del file di configurazione del db
-//format è l'estensione, al momento sono supportati i formati: ini
 //flag è uno dei seguenti valori: initial|mandatory|onrequest, in particolare
 //initial: indica che il db viene caricato all'avvio dell'applicazione (dunque è richiesto)
 //mandatory: indica che il db è indispensabile all'applicazione ma in fase di avvio viene solo controllata l'esistenza della configurazione
 //onrequest: indica che il db viene caricato su particolare richiesta a runtime e non è indispensabile
 
 
-$database [] = ["vtiger","vtiger","ini", "initial"];
-$database [] = ["local","localdb","ini", "initial"];
-$database [] = ["vtigertest","vtigertest","ini", "onrequest"];
+$database[] = array("vtiger");
+$database[] = array("localdb");
+$database[] = array("localvtiger");
+$database[] = array("vtigertest");
+$database[] = array("tsnw");
 
 
 
 
 
 
-$language [] = ["english","en_US"];
-$language [] = ["italiano","it_IT"];
+$language [] = array("english","en_US");
+$language [] = array("italiano","it_IT");
+
+
+$systemtables [] = array("smmfieldoperation","localdb","wolfmvc_smmfieldoperation");
 
 
 
-$module [] = ["incassi","incassi"];
+$module [] = array("incassi","incassi");
+
+
+
+$model [] = array("model","model");
+
+?>

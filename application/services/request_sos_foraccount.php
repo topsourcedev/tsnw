@@ -12,7 +12,7 @@ else {
 
 $link = mysqli_connect($host, $user, $password, $db) OR die("impossibile connettersi");
 
-$sql = "SELECT so.salesorderid as idso, so.subject as subject, so.total as tot
+$sql = "SELECT so.salesorderid as idso, so.salesorder_no as no, so.subject as subject, so.total as tot
 FROM vtiger_salesorder so
 WHERE so.accountid = '" . $accountid . "'";
 
@@ -24,7 +24,7 @@ $num = $result->num_rows;
 if ($num) {
     while ($row = $result->fetch_assoc()) {
         
-        echo "<option value=\"{$row['idso']}\">{$row['subject']} : {$row['tot']}&euro;</option>\n";
+        echo "<option value=\"{$row['idso']}\">{$row['no']} :: {$row['subject']} : {$row['tot']}&euro;</option>\n";
     }
 }
 ?>

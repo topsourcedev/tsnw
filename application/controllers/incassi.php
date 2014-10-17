@@ -38,21 +38,11 @@ class Incassi extends Controller {
 
 //questa istruzione dovrà dipendere dalla configurazione
         $view = $this->getActionView();
-        echo "Questo &eacute; il metodo index del sistema di Incassi.<br>"
-        . "Da qui &eacute; possibile raggiungere quasi tutte le schermate della gestione degli incassi.<br>";
-        echo "Quando sar&agrave; attivata la modalit&agrave; layout questa pagina sar&agrave; molto pi&ugrave; bella.<br>";
-        echo "<br> Le opzioni disponibili sono <br>";
-        echo "<ul><li>Inserimento nuovo incasso</li>";
-        echo "<li>Gestione incassi in transito</li>";
-        echo "<li>Amministrazione incassi</li>";
-        echo "<li>Gestione Banche</li></ul>";
-        echo "Le schermate che non sono raggiungibili da qui sono:";
-        echo "<ul><li>Modifica di un incasso</li>"
-        . "<li>Modifica di una banca</li>"
-        . "<li>Altre opzioni</li></ul>";
+       
         $view->set("insert_path", SITE_PATH . \WolfMVC\Registry::get("router")->getController() . "/insert/1");
         $view->set("gest_path", SITE_PATH . \WolfMVC\Registry::get("router")->getController() . "/gest");
         $view->set("amm_path", SITE_PATH . \WolfMVC\Registry::get("router")->getController() . "/amm");
+//        $view->set("bankinsert_path", SITE_PATH . \WolfMVC\Registry::get("router")->getController() . "/amm");
     }
 
     /**
@@ -119,8 +109,8 @@ class Incassi extends Controller {
                 $sf->setCompleting();
                 $sf->setSensible();
                 $sf->setFormlabel("Identificazione Azienda Cliente");
-                $sf->setSearchfield([0]);
-                $sf->setSearchurl("http://localhost/incassimvc/html/application/services/request_accounts.php?name=###0###");
+                $sf->setSearchfield(array(0));
+                $sf->setSearchurl("http://54.213.213.176/tsnw/application/services/request_accounts.php?name=###0###");
                 $sf->setSuggestboxsize(array(800, 600));
 
                 $sf2 = new WolfMVC\Template\Component\Simpleform();
@@ -134,7 +124,7 @@ class Incassi extends Controller {
                   ->setName("emission_date");
                 $sf2->setSensible();
                 $sf2->add("br");
-                $sf2->add(new FC\Number(), true)->setLabel("Importo Pagato:")->setRequired(true)->setName("amount")->setMin(1)->setStep(0.1);
+                $sf2->add(new FC\Number(), true)->setLabel("Importo Pagato:")->setRequired(true)->setName("amount")->setMin(1)->setStep(0.01);
                 $sf2->setSensible();
                 $sf2->add(new FC\Select(), true)->setLabel("Stato:")->setName("state")
                   ->addoption(new FC\Option(), true)->setValue("1")->setContent("Emesso")->up();
@@ -143,8 +133,8 @@ class Incassi extends Controller {
                 $sf3->setFormlabel("Dettagli sul pagamento");
                 if ((isset($_REQUEST['type'])) && ($_REQUEST['type'] == "3")) {
                     $sf3->add(new FC\Label(), true)->setContent("Per il pagamento in contanti non sono necessari ulteriori dati sul pagamento");
-                    $sf3->setSearchfield([0]);
-                    $sf->setSearchurl("http://localhost/incassimvc/html/application/services/request_accounts.php?name=###0###");
+                    $sf3->setSearchfield(array(0));
+                    $sf->setSearchurl("http://54.213.213.176/tsnw/application/services/request_accounts.php?name=###0###");
                 }
                 else {
                     $sf3->add(new FC\Text(), true)->setName("rif")->setLabel("Riferimento")->setPlaceholder("Num. assegno o conto")
@@ -178,9 +168,9 @@ class Incassi extends Controller {
                     $sf3->add(new FC\Hidden(), true)->setName("bankid");
                     $sf3->setCompleting();
                     $sf3->setSensible();
-                    $sf3->setSearchfield([2, 4, 5]);
+                    $sf3->setSearchfield(array(2, 4, 5));
 
-                    $sf3->setSearchurl("http://localhost/incassimvc/html/application/services/request_banks.php?bank=###0###&abi=###1###&cab=###2###");
+                    $sf3->setSearchurl("http://54.213.213.176/tsnw/application/services/request_banks.php?bank=###0###&abi=###1###&cab=###2###");
                     $sf3->setSuggestboxsize(array(800, 600));
                 }
                 $stepform->setForms(array($sf, $sf2, $sf3));
@@ -227,9 +217,9 @@ class Incassi extends Controller {
         $dd->setWhere(array("a.deleted = '0'"));
         $dd->getAllFromDb();
         $tab = new \WolfMVC\Template\Component\Datadisplay\Tabular($dd, "gestincassi");
-        $tab->setSearchurl("http://localhost/incassimvc/html/application/services/request_values_for_edit.php?idop=###0###");
-        $tab->setEditurl("http://localhost/incassimvc/html/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###");
-        $tab->setDeleteurl("http://localhost/incassimvc/html/application/services/delete.php?idop=###0###&idrecord=###1###");
+        $tab->setSearchurl("http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###");
+        $tab->setEditurl("http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###");
+        $tab->setDeleteurl("http://54.213.213.176/tsnw/application/services/delete.php?idop=###0###&idrecord=###1###");
 
         $cols = array(
           "amount as is",
@@ -305,10 +295,14 @@ class Incassi extends Controller {
             )
           )
         ));
-        $tab->setOperation("elimina", "<button type=\"button\">Del</button", 1);
+        $tab->setOperation("elimina", "del", 1);
+        $tab->setOperation("dettagli", "SO", 2);
         $tab->setServicesforrecordop(
-          array("elimina" => array("http://localhost/incassimvc/html/application/services/delete.php?idop=###0###&idrecord=###1###",array(1,"{{cid}}")))
-          );
+          array(
+            "elimina" => array("http://54.213.213.176/tsnw/application/services/delete.php?idop=%s&idrecord=%s", array(1, "{{cid}}")),
+            "dettagli" => array("http://54.213.213.176/tsnw/public/incassi/sodetails/1/%s/%s", array("{{cid}}", "{{accountid}}"), "red")
+          )
+        );
         $tab->getDataFromModel();
         $tab->showIndex(true)->setIndexFromModel(true, "cid");
         $view->set("data", $tab->make(""));
@@ -329,6 +323,7 @@ class Incassi extends Controller {
             $view = $this->getActionView();
 
             $view->set("title", "<h1>Dettagli Incasso per SO</h1>");
+            $view->set("back", "<form action=\"http://54.213.213.176/tsnw/public/incassi/gest\"><button type=\"submit\">Indietro</button></form>");
 
             $dd = new \WolfMVC\Model\Datadepict();
             $dd->addField(0, "id", "id", "external_collections_so", "a")
@@ -341,12 +336,12 @@ class Incassi extends Controller {
             $dd->setWhere(array("a.idcollection = '{$cid}'"));
             $dd->getAllFromDb();
             $tab = new \WolfMVC\Template\Component\Datadisplay\Tabular($dd, "sodetails");
-//            $tab->setSearchurl("http://localhost/incassimvc/html/application/services/request_values_for_edit.php?idop=###0###");
-//            $tab->setEditurl("http://localhost/incassimvc/html/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###");
-//            $tab->setDeleteurl("http://localhost/incassimvc/html/application/services/delete.php?idop=###0###&idrecord=###1###");
+//            $tab->setSearchurl("http://54.213.213.176/tsnw/application/services/request_values_for_edit.php?idop=###0###");
+//            $tab->setEditurl("http://54.213.213.176/tsnw/application/services/edit_value.php?idop=###0###&idrecord=###1###&datum=###2###");
+//            $tab->setDeleteurl("http://54.213.213.176/tsnw/application/services/delete.php?idop=###0###&idrecord=###1###");
 
             $cols = array(
-              "subject as link as " . $this->_conf["controller.incassi.gest.vtlinkforsodetails"] . $cid,
+              "subject as link as " . "http://54.213.213.176/vtigercrm/index.php?module=SalesOrder&action=DetailView&record=" . "{{idso}}",
               "amount as is",
             );
 
@@ -371,25 +366,37 @@ class Incassi extends Controller {
                 $incassoso->save();
                 $view->set("success", true);
             }
-            else {
-                $stepform = new Controller\Component\Stepform();
-                $stepform->setNumberofsteps(1);
-                $stepform->setPassedparameters($this->_parameters);
-                $stepform->setMethod("POST");
-                $sf = new WolfMVC\Template\Component\Simpleform();
-                $sf->setFormlabel("Dati del pagamento");
-                $sf->add(new FC\Selectwithservice, true)->setName("idso")->setLabel("SO")->setRequired(true)
-                  ->setService('http://localhost/incassimvc/html/application/services/request_sos_foraccount.php?accid=%s')
-                  ->setServiceparams(array($this->_parameters[2]));
-                $sf->add("br");
-                $sf->add(new FC\Number(), true)->setLabel("Ammontare:")->setRequired(true)->setName("amount")->setMin(1)->setStep(0.1);
-                $sf->add("br");
-                $sf->add("br");
-                $sf->add(new FC\Textarea(), true)->setLabel("Note:")->setName("description");
-                $stepform->setForms(array($sf));
-                $view->set("form", $stepform->make(""));
-            }
+            $stepform = new Controller\Component\Stepform();
+            $stepform->setNumberofsteps(1);
+            $stepform->setPassedparameters($this->_parameters);
+            $stepform->setMethod("POST");
+            $sf = new WolfMVC\Template\Component\Simpleform();
+            $sf->setFormlabel("Dati del pagamento");
+            $sf->add(new FC\Selectwithservice, true)->setName("idso")->setLabel("SO")->setRequired(true)
+              ->setService('http://54.213.213.176/tsnw/application/services/request_sos_foraccount.php?accid=%s')
+              ->setServiceparams(array($this->_parameters[2]));
+            $sf->add("br");
+            $sf->add(new FC\Number(), true)->setLabel("Ammontare:")->setRequired(true)->setName("amount")->setMin(1)->setStep(0.01);
+            $sf->add("br");
+            $sf->add("br");
+            $sf->add(new FC\Textarea(), true)->setLabel("Note:")->setName("description");
+            $stepform->setForms(array($sf));
+            $view->set("form", $stepform->make(""));
         }
+    }
+
+    public function ws___describe() {
+        $this->setWillRenderActionView(false);
+        $this->setWillRenderLayoutView(false);
+
+//            $view = $this->getActionView();
+        header('Content-type: application/json');
+        $ret = array();
+        $ret[0] = "No WS available at such address";
+        $ret['RequestAccept'] = $this->parseAcceptHeader();
+        echo json_encode($ret);
+        exit;
+//            $view->set("data", json_encode("No WS available at such address"));
     }
 
 }

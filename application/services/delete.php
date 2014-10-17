@@ -18,9 +18,9 @@ $REGISTERED_SQL = array(
   '2' => "DELETE FROM external_collections_so WHERE id = '%s'"
 );
 if (isset($REGISTERED_SQL[$_REQUEST['idop']])) {
-    $sql = sprintf($REGISTERED_SQL[$_REQUEST['idop']], $_REQUEST['datum'], $_REQUEST['idrecord']);
+    $sql = sprintf($REGISTERED_SQL[$_REQUEST['idop']], $_REQUEST['idrecord']);
 }
-echo $sql;
+//echo $sql; 
 $link = mysqli_connect($host, $user, $password, $db);
 
 $result = $link->query($sql);

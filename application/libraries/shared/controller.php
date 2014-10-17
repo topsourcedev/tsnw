@@ -17,7 +17,6 @@ namespace Shared {
         public function __construct($options = array()) {
             parent::__construct($options);
             $database = \WolfMVC\Registry::get("database_local");
-            $database->connect();
         }
 
     }

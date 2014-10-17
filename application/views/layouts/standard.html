@@ -1,11 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
     <head>
-        <title>WolfMVC</title>
-        {echo $system_js_including}
-        
+        <title>{if isset($custompagetitle)}{echo $custompagetitle}{/if}{else}{echo $stdpagetitle}{/else}</title>
+
+        <link rel="stylesheet" href="/tsnwprerelease/public/css/standardLayout.css">
+        <link rel="stylesheet" href="/tsnwprerelease/public/css/bs/bootstrap.min.css">
+        <script></script>
+        {if isset($system_js_including)}{echo $system_js_including}{/if}
+        <script></script>
+        {if isset($css_autoinclude)}
+        {foreach $css in $css_autoinclude}
+        <link rel="stylesheet" href="{echo $css}">
+        {/foreach}
+        {/if}
+        {if isset($js_autoinclude)}
+        {foreach $js in $js_autoinclude}
+        <script type="text/javascript" src="{echo $js}"></script>
+        {/foreach}
+        {/if}
+
     </head>
     <body>
+        <div style="height: 80px; width: 100%; background-color: rgb(0, 83, 128); vertical-align: middle;">
+            {if isset($customlogo)}
+            <div style="float: left; margin-left: 20px; margin-top: 7px;">
+                <img src="{$customlogo}">
+            </div>
+            <div style="position: absolute; left: 40%; top: 10px; color:#ffffff; ">
+                {if (isset($moduleName))}
+                <h1>{echo $moduleName}</h1>
+                {/if}
+            </div>
+            {/if}
+            {if !isset($noUser)}
+            {if isset($user)}
+            {if $user}
+            <div style="float: right; margin-right: 20px; margin-top: 7px;">
+                <p style="color: #ffffff">
+                    {if isset($gLogged)}
+                    <img src="{$googleIcon}" width="20px" heigth="20px" alt="Loggato con Google">
+                    {/if}
+                    {if isset($vtiger_logged_user_id)}
+                    <img src="{$vtigerIcon}" width="20px" heigth="20px" alt="Loggato con Vtiger">
+                    {/if}
+                    {echo $user} 
+                    <!--<a style="color: #ffffff" href="/tsnwprerelease/public/authenticate/logout">Logout</a>-->
+                    <button class="btn btn-danger" type="button" onclick="window.location.href = {$logoutpath}">Logout</button>
+                </p>
+                <p style="text-align: right">
+                    <a href="{$sitepath}"><img src="{$homeIcon}" width="25px" heigth="25px"></a>
+                </p>
+            </div>
+            {/if}
+            {/if}
+            {/if}
+        </div>
+        {if isset($breadCrumb)}
+        <div>
+            <ol class="breadcrumb">
+                {echo $breadCrumb}
+
+            </ol>
+        </div>
+        {/if}
+<!--        <pre>
+            {echo $session}
+        </pre>-->
         {echo $template}
     </body>
 </html>

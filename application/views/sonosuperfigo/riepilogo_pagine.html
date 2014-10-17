@@ -1,0 +1,69 @@
+<div ng-app="RiepilogoPagine" class="container" style="width: 100%; margin-top: 1%;">
+    <div ng-controller="MainController as MainCtrl">
+        <div class="row">
+            <div class="col-md-1"></div>
+
+            <div class="col-md-10">
+
+                <div class="greybox">
+                    <h3>Riepilogo pagine</h3>
+                    <div style="display: inline-block; float: left; width: 80%;">
+                    <table class="table-striped table-controlli">
+                        <tr>
+                            <th>CONTROLLO</th>
+                            <th>AZIONI</th>
+                        </tr>
+                        <tr ng-repeat="cont in MainCtrl.pagine.arrayData">
+                            <td>--__cont.index|uppercase__--</td>
+                            <td>
+                                <table class="table-azioni">
+                                    <!--<tr ng-if="{$first}">-->
+                                    <tr ng-if="!$index">
+                                        <th>Nome</th>
+                                        <th>Vista</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    <tr ng-if="MainCtrl.showOnlyViews" ng-repeat="met in cont.value|showOnlyViews">
+                                        <td>--__met.method__--</td>
+                                        <td>--__met.view__--</td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm">DISABLE</button>
+                                            <button class="btn btn-success btn-sm">ENABLE</button>
+                                            <button class="btn btn-primary btn-sm">AUTHORIZE</button>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="!MainCtrl.showOnlyViews" ng-repeat="met in cont.value">
+                                        <td>--__met.method__--</td>
+                                        <td>--__met.view__--</td>
+                                        <td><button class="btn btn-sm">AUT</button></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                            
+                    </table>
+                    </div>
+                    <div style="display: inline-block; float: left; width: 20%;">
+                        <label for=showOnlyViews">Mostra solo azioni con vista</label>
+                        <input type="checkbox" name="showOnlyViews" id="showOnlyViews" ng-model="MainCtrl.showOnlyViews">
+                    </div>
+                    
+                    
+                </div>
+                
+                
+                <div class="greybox">
+                    
+                </div>
+                
+                
+                
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+
+    </div>
+
+</div>
+</div>
+
