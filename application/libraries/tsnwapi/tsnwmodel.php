@@ -1,70 +1,94 @@
 <?php
 
-use WolfMVC\Controller as Controller;
+class Tsnwmodel extends WolfMVC\Base {
 
-class Test extends Controller {
-
-    public function __construct($options = array()) {
-
-        parent::__construct($options);
-    }
+    public $version = "0.1";
 
     /**
-     * @protected
+     * @readwrite
+     * @var array
      */
-    public function script_including() {
+    protected $_resources = array();
 
-        /*
-         * temporaneamente appoggio qui l'autorizzazione sul controller
-         */
-        $session = \WolfMVC\Registry::get("session");
-        $user = $session->get("user");
-        if (!in_array($user, array("Alberto Brudaglio", "Vincenzo Cervadoro")))
+    public function __construct($options = array()) {
+        if (!isset($options["setup"]))
         {
-            header("Location: " . SITE_PATH);
+            include (APP_PATH . "/application/configuration/tsnwapi/model.php");
+            $this->_resources = $resources;
         }
-
-        $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/jquery.js\"></script>";
-        $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/angular.min.js\"></script>";
-        $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/angular-resource.min.js\"></script>";
-        $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/ngbootstrap.min.js\"></script>";
-        $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/ng-ui-bootstrap-tpls-0.2.0.js\"></script>";
-        $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/core/data.js\"></script>";
-
-        $view = $this->getLayoutView();
-        $view->set("moduleName", "PAGINA DI TEST PER RICHIESTE HTTP");
+        parent::__construct();
     }
 
-    public function index() {
-        require_once('../application/libraries/vtwsclib/vtiger/WSClient.php');
-        $url = 'http://54.213.213.176/vtigertest/webservice.php';
-        $vtigerAdminAccessKey = 'tNkzlCVdaphElMuj';
-        $userName = "admin";
-        $client = new Vtiger_WSClient($url);
-        $login = $client->doLogin($userName, $vtigerAdminAccessKey);
-        if (!$login)
-            echo 'Login Failed';
+    public function setup() {
+        include (APP_PATH . "/application/configuration/tsnwapi/basevaluemap.php");
+        $resources = $this->retrieveConf($resources);
+//        echo "<pre>";
+//        print_r($resources);
+//        echo "</pre>";
+        $out = '$resources = ' . $this->arrayToCode($resources, 1);
+        if (file_put_contents(APP_PATH . "/application/configuration/tsnwapi/model.php", "<?php\n" . $out . "\n?>"))
+            return $out;
         else
+            return "Error in saving file";
+    }
+
+    private function arrayToCode($array, $depth = 0) {
+        $out = "array(\n";
+        if (!is_array($array))
         {
-            include (APP_PATH . "/application/configuration/tsnwapi/basevaluemap.php");
-
-            $resources = $this->retrieveConf($resources);
-
-//            "Documents"
-//            "Emails"
-//            "Users"
-//            "PBXManager"
-//            
-//            "Groups"
-//            "DocumentFolders"
-//            "CompanyDetails"
-            echo "<pre>";
-            echo '$resources' . " = " . $this->arrayToCode($resources, 1);
-//                print_r($describe);
-            echo "</pre>";
-            //nelle picklist >> value
-//            }
+            return null;
         }
+        $count = count($array);
+        $index = 1;
+        foreach ($array as $key => $value) {
+            for ($i = 0; $i < $depth; $i++) {
+                $out .= "\t";
+            }
+            if (is_string($key))
+            {
+                $k = "'" . $key . "' => ";
+            }
+            else
+            {
+                $k = "";
+            }
+            if (is_object($value))
+            {
+                $val = (array) $value;
+                $out .= $k . $this->arrayToCode($val, $depth + 1);
+            }
+            else if (is_array($value))
+            {
+                $out .= $k . $this->arrayToCode($value, $depth + 1);
+            }
+            else if (is_string($value))
+            {
+                $out .= $k . "'" . $value . "'";
+            }
+            else if ($value === TRUE)
+            {
+                $out .= $k . "TRUE";
+            }
+            else if ($value === FALSE)
+            {
+                $out .= $k . "FALSE";
+            }
+            else
+            {
+                $out .= $k . $value;
+            }
+            if ($index < $count)
+            {
+                $out .= ",";
+            }
+            $out .= "\n";
+            $index++;
+        }
+        for ($i = 0; $i < $depth; $i++) {
+            $out .= "\t";
+        }
+        $out .= ")";
+        return $out;
     }
 
     private function analyzeCustomTables($customDescription) {
@@ -283,6 +307,24 @@ class Test extends Controller {
                 case 'datetime':
                     $array["type"] = "datetime";
                     break;
+                case 'email':
+                    $array["type"] = "email";
+                    break;
+                case 'password':
+                    $array["type"] = "password";
+                    break;
+                case 'boolean':
+                    $array["type"] = "boolean";
+                    break;
+                case 'url':
+                    $array["type"] = "url";
+                    break;
+                case 'integer':
+                    $array["type"] = "integer";
+                    break;
+                case 'time':
+                    $array["type"] = "time";
+                    break;
                 case 'owner':
                     $array["refersTo"] = $translate['Users'];
                     $array["type"] = "reference";
@@ -308,7 +350,10 @@ class Test extends Controller {
                     $array["picklistValues"] = array();
                     foreach ($array["type"]["picklistValues"] as $kvalue => $value) {
                         if (isset($value["value"]))
+                        {
+                            $value["value"] = str_ireplace("'", "\'", $value["value"]);
                             array_push($array["picklistValues"], $value["value"]);
+                        }
                     }
                     $array["picklistValues"] = join("|", $array["picklistValues"]);
                     $array["defaultPicklistValue"] = $array["type"]["defaultValue"];
@@ -355,99 +400,41 @@ class Test extends Controller {
         return $ret;
     }
 
-    public function request() {
-        $view = $this->getActionView();
-        header("Access-Control-Allow-Origin: *");
-    }
-
-    public function ws___respond() {
-        $this->setWillRenderActionView(false);
-        $this->setWillRenderLayoutView(false);
-        header('Content-type: application/json');
-        //paylaod
-        if (isset($_REQUEST["data"]))
-            $data = json_decode($_POST["data"], true);
-        else
-            $data = array();
-//        get_header();
-//        header("HTTP/1.0 200 OK");
-        header("HTTP/1.0 404 Not Found");
-//        header("HTTP/1.0 201 Created");
-//        header("HTTP/1.0 204 No Content");
-        $ret = new stdClass();
-        $ret->method = $_SERVER["REQUEST_METHOD"];
-        $ret->received_payload = $data;
-        echo json_encode($ret, JSON_FORCE_OBJECT);
-    }
-
-    public function provaarray() {
-        $array = array(1, 2, 3, 4 => array(
-                "a" => 27, "b" => "rftg", "c" => array(
-                    "a" => true
-                ), 5
-            ), 5, 6);
-        echo "<pre>";
-        echo $this->arrayToCode($array);
-        echo "</pre>";
-    }
-
-    private function arrayToCode($array, $depth = 0) {
-        $out = "array(\n";
-        if (!is_array($array))
+    public function abstractrelations($node, &$rels, $prefix = "") {
+        if (isset($node["fields"]))
         {
-            return null;
+            if (!is_array($node["fields"]))
+            {
+                return $node["fields"];
+            }
+            if (!isset($rels[$prefix]))
+                $rels[$prefix] = array("direct" => array(), "inverse" => array());
+            foreach ($node["fields"] as $k => $v) {
+                if (isset($v["type"]) && $v["type"] === "reference" && isset($v["refersTo"]))
+                {
+                    $refs = explode("|", $v["refersTo"]);
+                    foreach ($refs as $kkk => $rrr) {
+                        $rels[$prefix]["direct"][] = array("refs" => $rrr, "via" => $v["name"]);
+                        if (!isset($rels[$rrr]))
+                            $rels[$rrr] = array("direct" => array(), "inverse" => array());
+                        $rels[$rrr]["inverse"][] = array("refed" => $prefix , "by" => $v["name"]);
+                    }
+                }
+            }
         }
-        $count = count($array);
-        $index = 1;
-        foreach ($array as $key => $value) {
-            for ($i = 0; $i < $depth; $i++) {
-                $out .= "\t";
+        else
+        {
+            foreach ($node as $k => $v) {
+                if (in_array($k, array("vtiger_module", "custom_description")))
+                    $this->abstractrelations($v, $rels, $prefix);
+                elseif ($prefix === "")
+                    $this->abstractrelations($v, $rels, $k);
+                else
+                    $this->abstractrelations($v, $rels, $prefix . "." . $k);
             }
-            if (is_string($key))
-            {
-                $k = "'" . $key . "' => ";
-            }
-            else
-            {
-                $k = "";
-            }
-            if (is_object($value))
-            {
-                $val = (array) $value;
-                $out .= $k . $this->arrayToCode($val, $depth + 1);
-            }
-            else if (is_array($value))
-            {
-                $out .= $k . $this->arrayToCode($value, $depth + 1);
-            }
-            else if (is_string($value))
-            {
-                $out .= $k . "'" . $value . "'";
-            }
-            else if ($value === TRUE)
-            {
-                $out .= $k . "TRUE";
-            }
-            else if ($value === FALSE)
-            {
-                $out .= $k . "FALSE";
-            }
-            else
-            {
-                $out .= $k . $value;
-            }
-            if ($index < $count)
-            {
-                $out .= ",";
-            }
-            $out .= "\n";
-            $index++;
         }
-        for ($i = 0; $i < $depth; $i++) {
-            $out .= "\t";
-        }
-        $out .= ")";
-        return $out;
     }
 
 }
+?>
+

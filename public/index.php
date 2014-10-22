@@ -82,6 +82,7 @@ try {
 try {
     $vtiger_login = false;
     require_once('../application/libraries/vtwsclib/vtiger/WSClient.php');
+    require_once('../application/libraries/tsnwapi/tsnwserver.php');
     $url = 'http://54.213.213.176/vtigercrm/webservice.php';
     $vtigerAdminAccessKey = 'tNkzlCVdaphElMuj';
     $userName = "admin";
