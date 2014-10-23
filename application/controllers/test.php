@@ -30,11 +30,16 @@ class Test extends Controller {
         $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/ngbootstrap.min.js\"></script>";
         $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/ng-ui-bootstrap-tpls-0.2.0.js\"></script>";
         $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/core/data.js\"></script>";
+        $this->_system_js_including .="<script type=\"text/javascript\" src=\"" . SITE_PATH . "js/core/tsnwclient.js\"></script>";
 
         $view = $this->getLayoutView();
         $view->set("moduleName", "PAGINA DI TEST PER RICHIESTE HTTP");
     }
 
+    public function vincenzo(){
+    }
+    
+    
     public function index() {
         require_once('../application/libraries/vtwsclib/vtiger/WSClient.php');
         $url = 'http://54.213.213.176/vtigertest/webservice.php';

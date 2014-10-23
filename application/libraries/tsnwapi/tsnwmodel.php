@@ -10,26 +10,60 @@ class Tsnwmodel extends WolfMVC\Base {
      */
     protected $_resources = array();
 
+    /**
+     * @readwrite
+     * @var array
+     */
+    protected $_names = array();
+
+    /**
+     * @readwrite
+     * @var array
+     */
+    protected $_rels = array();
+
     public function __construct($options = array()) {
         if (!isset($options["setup"]))
         {
             include (APP_PATH . "/application/configuration/tsnwapi/model.php");
             $this->_resources = $resources;
+            include (APP_PATH . "/application/configuration/tsnwapi/rels.php");
+            $this->_names = $rels["NAMES"];
+            unset($rels["NAMES"]);
+            $this->_rels = $rels;
         }
         parent::__construct();
+    }
+
+    public function extractByPath($path) {
+        $path = explode(".", $path);
+        $node = $this->_resources;
+        foreach ($path as $k => $p) {
+            if (!isset($node[$p]))
+            {
+                return null;
+            }
+            $node = $node[$p];
+        }
+        return $node;
     }
 
     public function setup() {
         include (APP_PATH . "/application/configuration/tsnwapi/basevaluemap.php");
         $resources = $this->retrieveConf($resources);
+        $rels = array();
+        $this->abstractrelations($resources, $rels);
 //        echo "<pre>";
 //        print_r($resources);
 //        echo "</pre>";
         $out = '$resources = ' . $this->arrayToCode($resources, 1);
-        if (file_put_contents(APP_PATH . "/application/configuration/tsnwapi/model.php", "<?php\n" . $out . "\n?>"))
+        $relsout = '$rels = ' . $this->arrayToCode($rels, 1);
+        $success1 = file_put_contents(APP_PATH . "/application/configuration/tsnwapi/model.php", "<?php\n" . $out . ";\n?>");
+        $success2 = file_put_contents(APP_PATH . "/application/configuration/tsnwapi/rels.php", "<?php\n" . $relsout . ";\n?>");
+        if ($success1 && $success2)
             return $out;
         else
-            return "Error in saving file";
+            return "Error in saving a file";
     }
 
     private function arrayToCode($array, $depth = 0) {
@@ -164,6 +198,10 @@ class Tsnwmodel extends WolfMVC\Base {
                             $tmpfields[$kfield]["mandatory"] = FALSE;
                         }
                         $tmpfields[$kfield]["nullable"] = $tmpfields[$kfield]["Null"] === "NO" ? FALSE : TRUE;
+                        if ($tmpfields[$kfield]["Key"] === "PRI")
+                        {
+                            $tabid = $tmpfields[$kfield]["name"];
+                        }
                         $tmpfields[$kfield]["default"] = (isset($tmpfields[$kfield]["Default"]) && !empty($tmpfields[$kfield]["Default"]) ? $tmpfields[$kfield]["Default"] : "");
                         if (isset($fies[$tablealias . "." . $field["Field"]]["editable"]))
                         {
@@ -202,12 +240,39 @@ class Tsnwmodel extends WolfMVC\Base {
             'updateable' => $customDescription["updateable"],
             'deleteable' => $customDescription["deleteable"],
             'retrieveable' => $customDescription["retrieveable"],
+            'deleted' => $customDescription["deleted"],
+            'database' => $customDescription["database"],
+            'name' => $customDescription["name"],
+            'idField' => (isset($tabid) ? $tabid : ""),
             "tables" => array(
                 "list" => $tables,
                 "structure" => $matches
             ),
+            "tablesforquery" => $tabs,
             "fields" => $fields
         );
+    }
+
+    private function overrideArray($array, $override) {
+        foreach ($override as $k => $v) {
+            if (!isset($array[$k]))
+            {
+                continue;
+            }
+            else if (is_array($v) && !is_array($array[$k]))
+            {
+                continue;
+            }
+            else if (is_array($v) && is_array($array[$k]))
+            {
+                $array[$k] = $this->overrideArray($array[$k], $v);
+            }
+            else
+            {
+                $array[$k] = $v;
+            }
+        }
+        return $array;
     }
 
     private function retrieveConf($array) {
@@ -248,6 +313,10 @@ class Tsnwmodel extends WolfMVC\Base {
                 $describe = $client->doDescribe($arr);
                 $describe = $this->superfilterarray($describe, $structure);
                 $describe = $this->reducetype($describe);
+                if (isset($describe["name"]))
+                {
+                    $describe["name"] = strtolower($describe["name"]);
+                }
                 $array[$k] = $describe;
             }
             elseif ($k === "custom_description")
@@ -255,6 +324,30 @@ class Tsnwmodel extends WolfMVC\Base {
                 $array[$k] = $this->analyzeCustomTables($arr);
             }
         }
+        $override = array(
+            "bpm" => array(
+                "eco" => array(
+                    "invoices" => array(
+                        "vtiger_module" => array(
+                            "updateable" => FALSE
+                        )
+                    ),
+                ),
+                "com" => array(
+                    "quotes" => array(
+                        "vtiger_module" => array(
+                            "updateable" => FALSE
+                        )
+                    ),
+                    "salesorders" => array(
+                        "vtiger_module" => array(
+                            "updateable" => FALSE
+                        )
+                    )
+                )
+            )
+        );
+        $array = $this->overrideArray($array, $override);
         return $array;
     }
 
@@ -401,8 +494,16 @@ class Tsnwmodel extends WolfMVC\Base {
     }
 
     public function abstractrelations($node, &$rels, $prefix = "") {
+        if (!isset($rels["NAMES"]))
+        {
+            $rels["NAMES"] = array();
+        }
         if (isset($node["fields"]))
         {
+            if (!isset($rels["NAMES"][$node["name"]]))
+            {
+                $rels["NAMES"][$node["name"]] = $prefix;
+            }
             if (!is_array($node["fields"]))
             {
                 return $node["fields"];
@@ -414,10 +515,14 @@ class Tsnwmodel extends WolfMVC\Base {
                 {
                     $refs = explode("|", $v["refersTo"]);
                     foreach ($refs as $kkk => $rrr) {
+                        if ($rrr === "")
+                        {
+                            continue;
+                        }
                         $rels[$prefix]["direct"][] = array("refs" => $rrr, "via" => $v["name"]);
                         if (!isset($rels[$rrr]))
                             $rels[$rrr] = array("direct" => array(), "inverse" => array());
-                        $rels[$rrr]["inverse"][] = array("refed" => $prefix , "by" => $v["name"]);
+                        $rels[$rrr]["inverse"][] = array("refed" => $prefix, "by" => $v["name"]);
                     }
                 }
             }

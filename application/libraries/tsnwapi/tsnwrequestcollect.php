@@ -29,7 +29,8 @@ class Tsnwrequestcollect extends WolfMVC\Base {
         switch ($this->_method) {
             case 'GET':
             case 'get':
-                parse_str($_SERVER['QUERY_STRING'], $payload);
+                $payload["qs"] = array();
+                parse_str($_SERVER['QUERY_STRING'], $payload["qs"]);
                 $payload["res"] = array();
                 $index = 0;
 
@@ -38,13 +39,13 @@ class Tsnwrequestcollect extends WolfMVC\Base {
                     $payload["res"][$k] = $par;
                 }
 
-                if (isset($payload["url"]))
+                if (isset($payload["qs"]["url"]))
                 {
-                    unset($payload["url"]);
+                    unset($payload["qs"]["url"]);
                 }
-                if (isset($payload["extension"]))
+                if (isset($payload["qs"]["extension"]))
                 {
-                    unset($payload["extension"]);
+                    unset($payload["qs"]["extension"]);
                 }
                 $this->_payload = $payload;
 //                $this->_payload = $payload;
@@ -52,7 +53,8 @@ class Tsnwrequestcollect extends WolfMVC\Base {
                 break;
             case 'POST':
             case 'post':
-                parse_str($_SERVER['QUERY_STRING'], $payload);
+                $payload["vm"] = array();
+//                parse_str($_SERVER['QUERY_STRING'], $payload["qs"]);
                 $payload["res"] = array();
                 $index = 0;
                 foreach ($parameters as $k => $par) {
@@ -62,23 +64,24 @@ class Tsnwrequestcollect extends WolfMVC\Base {
                     $payload["res"][$index] = $par;
                 }
                 foreach ($_REQUEST as $k => $post) {
-                    $payload[$k] = $post;
+                    $payload["vm"][$k] = $post;
                 }
-                if (isset($payload["url"]))
+                if (isset($payload["vm"]["url"]))
                 {
-                    unset($payload["url"]);
+                    unset($payload["vm"]["url"]);
                 }
-                if (isset($payload["extension"]))
+                if (isset($payload["vm"]["extension"]))
                 {
-                    unset($payload["extension"]);
+                    unset($payload["vm"]["extension"]);
                 }
                 $this->_payload = $payload;
 
                 break;
             case 'PUT':
             case 'put':
-                parse_str($_SERVER['QUERY_STRING'], $payload);
+//                parse_str($_SERVER['QUERY_STRING'], $payload);
                 $payload["res"] = array();
+                $payload["vm"] = array();
                 $index = 0;
                 foreach ($parameters as $k => $par) {
                     while (isset($payload["res"][$index])) {
@@ -87,22 +90,21 @@ class Tsnwrequestcollect extends WolfMVC\Base {
                     $payload["res"][$index] = $par;
                 }
                 foreach ($_REQUEST as $k => $post) {
-                    $payload[$k] = $post;
+                    $payload["vm"][$k] = $post;
                 }
-                if (isset($payload["url"]))
+                if (isset($payload["vm"]["url"]))
                 {
-                    unset($payload["url"]);
+                    unset($payload["vm"]["url"]);
                 }
-                if (isset($payload["extension"]))
+                if (isset($payload["vm"]["extension"]))
                 {
-                    unset($payload["extension"]);
+                    unset($payload["vm"]["extension"]);
                 }
                 $this->_payload = $payload;
 
                 break;
             case 'DELETE':
             case 'delete':
-                parse_str($_SERVER['QUERY_STRING'], $payload);
                 $payload["res"] = array();
                 $index = 0;
                 foreach ($parameters as $k => $par) {
@@ -110,17 +112,6 @@ class Tsnwrequestcollect extends WolfMVC\Base {
                         $index++;
                     }
                     $payload["res"][$index] = $par;
-                }
-                foreach ($_REQUEST as $k => $post) {
-                    $payload[$k] = $post;
-                }
-                if (isset($payload["url"]))
-                {
-                    unset($payload["url"]);
-                }
-                if (isset($payload["extension"]))
-                {
-                    unset($payload["extension"]);
                 }
                 $this->_payload = $payload;
                 break;

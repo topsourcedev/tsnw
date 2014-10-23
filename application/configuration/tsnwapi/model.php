@@ -1,10 +1,10 @@
 <?php
 $resources = array(
 	'tools' => array(
-		'modcomments' => array(
-			'comments' => array(
+		'comments' => array(
+			'modcomments' => array(
 				'vtiger_module' => array(
-					'name' => 'ModComments',
+					'name' => 'modcomments',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -94,7 +94,7 @@ $resources = array(
 		'users' => array(
 			'vtusers' => array(
 				'vtiger_module' => array(
-					'name' => 'Users',
+					'name' => 'users',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -544,7 +544,7 @@ $resources = array(
 		'cd' => array(
 			'accounts' => array(
 				'vtiger_module' => array(
-					'name' => 'Accounts',
+					'name' => 'accounts',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -929,7 +929,7 @@ $resources = array(
 							'nullable' => TRUE,
 							'editable' => TRUE,
 							'default' => '',
-							'picklistValues' => 'Ida Ponti|&quot;&quot;|Cristiana Scotti|Cristina Germanis|Valeria Ricco|Sara Goglia|Greta Kuka|Maria Machowska|Test|Diretta Venditore|Elena Burlini|Antonella Ferrau|Vittoria Purificato|Paola Debbia|Anna Saracino|Claudia Paulli|Giancarla Grillini|Angela Gallo|Anna Contini|Paola Boga|Marco Ribeca|Dina Venturi|Cristina Morchio|Andrea Delzotto|Anna Tinelli|Antonella Resta|Marilena Chiorlin',
+							'picklistValues' => 'Ida Ponti|Cristiana Scotti|&quot;&quot;|Cristina Germanis|Valeria Ricco|Sara Goglia|Greta Kuka|Maria Machowska|Test|Diretta Venditore|Elena Burlini|Antonella Ferrau|Vittoria Purificato|Paola Debbia|Anna Saracino|Claudia Paulli|Giancarla Grillini|Angela Gallo|Anna Contini|Paola Boga|Marco Ribeca|Dina Venturi|Cristina Morchio|Andrea Delzotto|Anna Tinelli|Antonella Resta|Marilena Chiorlin',
 							'defaultPicklistValue' => 'Ida Ponti'
 							),
 						array(
@@ -974,7 +974,7 @@ $resources = array(
 				),
 			'contacts' => array(
 				'vtiger_module' => array(
-					'name' => 'Contacts',
+					'name' => 'contacts',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -1061,7 +1061,7 @@ $resources = array(
 							'nullable' => TRUE,
 							'editable' => TRUE,
 							'default' => '',
-							'picklistValues' => '--None--|Imprese e Imprenditori|Cold Call|Existing Customer|Self Generated|Employee|Partner|Public Relations|Direct Mail|Conference|Trade Show|Web Site|Word of mouth|Other',
+							'picklistValues' => '--None--|Cold Call|Imprese e Imprenditori|Existing Customer|Self Generated|Employee|Partner|Public Relations|Direct Mail|Conference|Trade Show|Web Site|Word of mouth|Other',
 							'defaultPicklistValue' => '--None--'
 							),
 						array(
@@ -1390,7 +1390,7 @@ $resources = array(
 		'rm' => array(
 			'events' => array(
 				'vtiger_module' => array(
-					'name' => 'Events',
+					'name' => 'events',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -1676,7 +1676,7 @@ $resources = array(
 				),
 			'calendars' => array(
 				'vtiger_module' => array(
-					'name' => 'Calendar',
+					'name' => 'calendar',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -1935,7 +1935,7 @@ $resources = array(
 		'eco' => array(
 			'invoices' => array(
 				'vtiger_module' => array(
-					'name' => 'Invoice',
+					'name' => 'invoice',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -2312,6 +2312,7 @@ $resources = array(
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
 					'retrieveable' => TRUE,
+					'name' => 'collections',
 					'tables' => array(
 						'list' => array(
 							'a' => 'external_collections'
@@ -2452,6 +2453,7 @@ $resources = array(
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
 					'retrieveable' => TRUE,
+					'name' => 'banks',
 					'tables' => array(
 						'list' => array(
 							'a' => 'external_banks'
@@ -2542,6 +2544,7 @@ $resources = array(
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
 					'retrieveable' => TRUE,
+					'name' => 'pjtcollections',
 					'tables' => array(
 						'list' => array(
 							'a' => 'external_project_collections'
@@ -2668,6 +2671,7 @@ $resources = array(
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
 					'retrieveable' => TRUE,
+					'name' => 'pjtinvoices',
 					'tables' => array(
 						'list' => array(
 							'a' => 'external_project_invoices'
@@ -2771,18 +2775,12 @@ $resources = array(
 							)
 						)
 					)
-				),
-			'project_salesorders',
-			'analysis_salesorders',
-			'project_quotes',
-			'analysis_quotes',
-			'project_potentials',
-			'analysis_potentials'
+				)
 			),
 		'com' => array(
 			'potentials' => array(
 				'vtiger_module' => array(
-					'name' => 'Potentials',
+					'name' => 'potentials',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -2842,7 +2840,7 @@ $resources = array(
 							'nullable' => TRUE,
 							'editable' => TRUE,
 							'default' => '',
-							'picklistValues' => '--None--|New Business PMI|Existing Business|New Business|Old Account',
+							'picklistValues' => '--None--|Existing Business|New Business PMI|New Business|Old Account',
 							'defaultPicklistValue' => '--None--'
 							),
 						array(
@@ -2862,7 +2860,7 @@ $resources = array(
 							'nullable' => TRUE,
 							'editable' => TRUE,
 							'default' => '',
-							'picklistValues' => '--None--|Imprese e Imprenditori|Cold Call|Existing Customer|Self Generated|Employee|Partner|Public Relations|Direct Mail|Conference|Trade Show|Web Site|Word of mouth|Other',
+							'picklistValues' => '--None--|Cold Call|Imprese e Imprenditori|Existing Customer|Self Generated|Employee|Partner|Public Relations|Direct Mail|Conference|Trade Show|Web Site|Word of mouth|Other',
 							'defaultPicklistValue' => '--None--'
 							),
 						array(
@@ -3021,7 +3019,7 @@ $resources = array(
 				),
 			'quotes' => array(
 				'vtiger_module' => array(
-					'name' => 'Quotes',
+					'name' => 'quotes',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -3461,7 +3459,7 @@ $resources = array(
 				),
 			'salesorders' => array(
 				'vtiger_module' => array(
-					'name' => 'SalesOrder',
+					'name' => 'salesorder',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -3946,7 +3944,7 @@ $resources = array(
 				),
 			'services' => array(
 				'vtiger_module' => array(
-					'name' => 'Services',
+					'name' => 'services',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -4146,7 +4144,7 @@ $resources = array(
 		'pjm' => array(
 			'projects' => array(
 				'vtiger_module' => array(
-					'name' => 'Project',
+					'name' => 'project',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -4352,7 +4350,7 @@ $resources = array(
 				),
 			'project_milestones' => array(
 				'vtiger_module' => array(
-					'name' => 'ProjectMilestone',
+					'name' => 'projectmilestone',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -4472,6 +4470,7 @@ $resources = array(
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
 					'retrieveable' => TRUE,
+					'name' => 'tmpmilestone',
 					'tables' => array(
 						'list' => array(
 							'a' => 'external_project_milestone'
@@ -4568,7 +4567,7 @@ $resources = array(
 				),
 			'project_tasks' => array(
 				'vtiger_module' => array(
-					'name' => 'ProjectTask',
+					'name' => 'projecttask',
 					'createable' => TRUE,
 					'updateable' => TRUE,
 					'deleteable' => TRUE,
@@ -4733,5 +4732,5 @@ $resources = array(
 				)
 			)
 		)
-	)
+	);
 ?>

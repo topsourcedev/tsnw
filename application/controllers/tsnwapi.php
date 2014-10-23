@@ -2,7 +2,7 @@
 
 use WolfMVC\Controller as Controller;
 
-class Tsnwapi extends Controller {  
+class Tsnwapi extends Controller {
 
     public function __construct($options = array()) {
 
@@ -19,7 +19,7 @@ class Tsnwapi extends Controller {
          */
         $session = \WolfMVC\Registry::get("session");
         $user = $session->get("user");
-        if ($user !== "Alberto Brudaglio")
+        if (!in_array($user, array("Alberto Brudaglio", "Vincenzo Cervadoro")))
         {
             header("Location: " . SITE_PATH);
         }
@@ -38,11 +38,11 @@ class Tsnwapi extends Controller {
     public function index() {
         
     }
-    
+
     public function setup() {
         $view = $this->getLayoutView();
         $view->set("moduleName", "API TSNW: SETUP");
-        $model = new Tsnwmodel(array("setup"=>TRUE));
+        $model = new Tsnwmodel(array("setup" => TRUE));
         $view = $this->getActionView();
         $view->set("out", $model->setup());
     }
@@ -53,13 +53,27 @@ class Tsnwapi extends Controller {
         header('Content-type: application/json');
         $tsnw = new Tsnwserver();
         $tsnw->authorize(new Tsnwauth());
-        
-        
+
+
         //request collect
         $request = $tsnw->requestcollect($this->_parameters);
-        $anal = new Tsnwanalyzer();
-        echo json_encode($anal->analyze(),JSON_FORCE_OBJECT);
-        
+        $pub = new Tsnwpublisher();
+
+        try {
+            $processedRequest = $tsnw->requestanalyze()->getAnalyzedRequest();
+            $op = $tsnw->actionperform();
+            $pub->setContent($op);
+        } catch (Tsnwexception $e) {
+            $pub->setStatus($e->getCode());
+            $pub->setContent($e->getMessage());
+        } 
+        catch (\Exception $e) {
+            $pub->setStatus(500);
+            $pub->setContent("An error occurred during request analysis. It's not possible to respond! ".$e->getMessage()."   ".$e->getTrace());
+//            $pub->setContent("An error occurred during request analysis. It's not possible to respond!");
+        }
+//        echo json_encode($request->getRequest(),JSON_FORCE_OBJECT);
+        echo json_encode($pub->publish(), JSON_FORCE_OBJECT);
     }
 
 }

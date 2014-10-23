@@ -16,7 +16,7 @@ function printw($key) {
 }
 
 ob_start();
-ob_start();
+//ob_start();
 
 define("APP_PATH", dirname(dirname(__FILE__)));
 $uri = $_SERVER['REQUEST_URI'];
@@ -105,6 +105,31 @@ try {
     {
         echo 'Vtiger WS Login Failed';
     }
+    $vtiger_login = false;
+    require_once('../application/libraries/vtwsclib/vtiger/WSClient.php');
+    require_once('../application/libraries/tsnwapi/tsnwserver.php');
+    $url = 'http://54.213.213.176/vtigertest/webservice.php';
+    $vtigerAdminAccessKey = 'tNkzlCVdaphElMuj';
+    $userName = "admin";
+    for ($kkk = 0; $kkk < 10; $kkk++) {
+        $client = new Vtiger_WSClient($url);
+        $login = $client->doLogin($userName, $vtigerAdminAccessKey);
+        if (!$login)
+        {
+            usleep(200000); // << 0,2 secondi
+            continue;
+        }
+        else
+        {
+            WolfMVC\Registry::set("VTWStest", $client);
+            $vtiger_login = true;
+            break;
+        }
+    }
+    if (!$vtiger_login)
+    {
+        echo 'Vtiger WS Login Failed';
+    }
 } catch (\Exception $e) {
     echo $e->getMessage();
 }
@@ -166,8 +191,9 @@ try {
 //
 
 
-$preContent = ob_get_contents();
-ob_end_clean();
+$preContent = "";
+//ob_get_contents();
+//ob_end_clean(); 
 \WolfMVC\Registry::set("preContent", $preContent);
 try {
     $systemstatus = WolfMVC\Registry::get("systemstatus")->systemstatus;

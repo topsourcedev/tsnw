@@ -2,8 +2,8 @@
 
 $resources = array(
     "tools" => array(
-        "modcomments" => array(
-            "comments" => array(
+        "comments" => array(
+            "modcomments" => array(
                 "vtiger_module" => "ModComments"
             )
         ),
@@ -38,11 +38,13 @@ $resources = array(
             ),
             "collections" => array(
                 "custom_description" => array(
+                    "name" => "collections",
                     "tables" => "external_collections a",
                     "createable" => TRUE,
                     "updateable" => TRUE,
                     "deleteable" => TRUE,
                     "retrieveable" => TRUE,
+                    "database" => "vtiger",
                     "fields" => array(
                         "a.id" => array("mandatory" => TRUE, "editable" => FALSE),
                         "a.amount" => array("mandatory" => TRUE),
@@ -65,11 +67,13 @@ $resources = array(
             ),
             "banks" => array(
                 "custom_description" => array(
+                    "name" => "banks",
                     "tables" => "external_banks a",
                     "createable" => TRUE,
                     "updateable" => TRUE,
                     "deleteable" => TRUE,
                     "retrieveable" => TRUE,
+                    "database" => "vtiger",
                     "fields" => array(
                         "a.bankid" => array("mandatory" => TRUE, "editable" => FALSE),
                         "a.bankabi" => array("mandatory" => TRUE, "editable" => FALSE),
@@ -86,15 +90,17 @@ $resources = array(
             ),
             "project_collections" => array(
                 "custom_description" => array(
+                    "name" => "pjtcollections",
                     "tables" => "external_project_collections a",
                     "createable" => TRUE,
                     "updateable" => TRUE,
                     "deleteable" => TRUE,
                     "retrieveable" => TRUE,
+                    "database" => "vtiger",
                     "fields" => array(
                         "a.id" => array("mandatory" => TRUE, "editable" => FALSE),
                         "a.salesorderid" => array("type" => "reference", "refersTo" => "bpm.com.salesorder"),
-                        "a.projectid" => array("mandatory" => TRUE, "editable" => FALSE, "type" => "reference", "refersTo" => "bpm.pjm.project"),
+                        "a.projectid" => array("mandatory" => TRUE, "editable" => FALSE, "type" => "reference", "refersTo" => "bpm.pjm.projects"),
                         "a.date" => array(),
                         "a.status" => array("mandatory" => TRUE),
                         "a.flowstatus" => array("mandatory" => TRUE),
@@ -111,15 +117,17 @@ $resources = array(
             ),
             "project_invoices" => array(
                 "custom_description" => array(
+                    "name" => "pjtinvoices",
                     "tables" => "external_project_invoices a",
                     "createable" => TRUE,
                     "updateable" => TRUE,
                     "deleteable" => TRUE,
                     "retrieveable" => TRUE,
+                    "database" => "vtiger",
                     "fields" => array(
                         "a.id" => array("mandatory" => TRUE, "editable" => FALSE),
                         "a.salesorderid" => array("type" => "reference", "refersTo" => "bpm.com.salesorder"),
-                        "a.projectid" => array("mandatory" => TRUE, "editable" => FALSE, "type" => "reference", "refersTo" => "bpm.pjm.project"),
+                        "a.projectid" => array("mandatory" => TRUE, "editable" => FALSE, "type" => "reference", "refersTo" => "bpm.pjm.projects"),
                         "a.date" => array(),
                         "a.status" => array("mandatory" => TRUE),
                         "a.flowstatus" => array("mandatory" => TRUE),
@@ -131,13 +139,13 @@ $resources = array(
                     ),
                     "deleted" => "deleted"
                 )
-            ),
-            "project_salesorders",
-            "analysis_salesorders",
-            "project_quotes",
-            "analysis_quotes",
-            "project_potentials",
-            "analysis_potentials"
+            )//,
+//            "project_salesorders",
+//            "analysis_salesorders",
+//            "project_quotes",
+//            "analysis_quotes",
+//            "project_potentials",
+//            "analysis_potentials"
         ),
         "com" => array(
             "potentials" => array(
@@ -162,15 +170,17 @@ $resources = array(
             ),
             "temporary_milestones" => array(
                 "custom_description" => array(
+                    "name" => "tmpmilestones",
                     "tables" => "external_project_milestone a",
                     "createable" => TRUE,
                     "updateable" => TRUE,
                     "deleteable" => TRUE,
                     "retrieveable" => TRUE,
+                    "database" => "vtiger",
                     "fields" => array(
                         "a.milestoneid" => array("mandatory" => TRUE, "editable" => FALSE),
                         "a.label" => array(),
-                        "a.projectid" => array("mandatory" => TRUE, "editable" => FALSE, "type" => "reference", "refersTo" => "bpm.pjm.project"),
+                        "a.projectid" => array("mandatory" => TRUE, "editable" => FALSE, "type" => "reference", "refersTo" => "bpm.pjm.projects"),
                         "a.date" => array(),
                         "a.status" => array("mandatory" => TRUE),
                         "a.flowstatus" => array("mandatory" => TRUE),
